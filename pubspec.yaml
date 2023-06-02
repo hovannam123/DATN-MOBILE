@@ -1,0 +1,48 @@
+name: safe_food
+description: A new Flutter project.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=2.19.0-444.1.beta <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  google_sign_in: ^5.4.4
+  flutter_facebook_auth: ^5.0.7
+  provider: ^6.0.5
+  video_player: ^2.5.1
+  google_maps_flutter: ^2.2.3
+  http: ^0.13.5
+  shared_preferences: ^2.1.0
+  font_awesome_flutter: ^10.4.0
+  intl: ^0.17.0
+  flutter_image_slideshow: ^0.1.5
+  url_launcher: ^6.1.7
+  fl_chart: ^0.62.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/videos/
+  fonts:
+     - family: Roboto
+       fonts:
+         - asset: assets/fonts/Roboto-Light.ttf
+           style: italic
+     - family: NanumBarunGothic
+       fonts:
+         - asset: assets/fonts/NanumBarunGothic.ttf
+           style: italic
+     - family: OpenSans
+       fonts:
+         - asset: assets/fonts/OpenSans-Light.ttf
+           style: italic

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1060554612779",
+    "project_id": "loginto-d43df",
+    "storage_bucket": "loginto-d43df.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060554612779:android:06d935a514e5fe0e0fca6e",
+        "android_client_info": {
+          "package_name": "com.example.safe_food"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1060554612779-6dts988v5ghnj5ckhp56mve5rh7dah82.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.safe_food",
+            "certificate_hash": "31f0add09b5f2bb21bdfcf4a4140a0d01e756b3c"
+          }
+        },
+        {
+          "client_id": "1060554612779-fq9p39v4ia6k5k4oboa2nafj9lum0u6q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZ6dU1m0toVAB5Jbih8lBEd77FK9U3a_o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1060554612779-e1seeo81o672php9dq553h98ks8kbtrl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
