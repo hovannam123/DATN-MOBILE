@@ -41,7 +41,7 @@ class _SearchBarState extends State<SearchBar> {
                     padding: EdgeInsets.only(left: 24, right: 24),
                     child: IconButton(
                         onPressed: () {},
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.search,
                           color: Colors.black,
                         ))),
@@ -49,7 +49,7 @@ class _SearchBarState extends State<SearchBar> {
                   child: TextField(
                     controller: controller,
                     decoration: const InputDecoration(
-                        hintText: 'Search',
+                        hintText: 'Tìm kiếm',
                         hintStyle: AppTextStyle.h_grey_no_underline,
                         border: InputBorder.none),
                   ),
@@ -59,7 +59,7 @@ class _SearchBarState extends State<SearchBar> {
           ),
           Container(
             height: size.height / 15,
-            margin: EdgeInsets.only(left: 10),
+            margin: const EdgeInsets.only(left: 10),
             decoration: BoxDecoration(
               color: Colors.white54,
               borderRadius: BorderRadius.circular(10),

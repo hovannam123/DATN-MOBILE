@@ -7,6 +7,7 @@ class AppTextStyle {
       TextStyle(fontWeight: FontWeight.w400, fontSize: 30, height: 1.2);
   static const heading1SemiBold = TextStyle(
     fontWeight: FontWeight.w400,
+    fontFamily: 'Poppins-Light',
     fontSize: 30,
   );
   static const heading1Medium = TextStyle(
@@ -25,12 +26,29 @@ class AppTextStyle {
       decoration: TextDecoration.none,
       color: AppTheme.white);
 
+  static const heading2Light = TextStyle(
+      fontWeight: FontWeight.w600,
+      fontSize: 20,
+      height: 1.3,
+      fontFamily: 'Poppins-Light',
+      decoration: TextDecoration.none,
+      color: AppTheme.white);
+
+  static const heading2Black = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 20,
+      height: 1.3,
+      fontFamily: 'Poppins-Bold',
+      decoration: TextDecoration.none,
+      color: Colors.black);
+
   //==========Heading 3=============
 
   static const heading2Medium = TextStyle(
       fontWeight: FontWeight.w600,
       fontSize: 24,
       height: 1.4,
+      fontFamily: 'Poppins-Light',
       decoration: TextDecoration.none,
       color: Colors.black);
 
@@ -38,6 +56,7 @@ class AppTextStyle {
       fontWeight: FontWeight.w600,
       fontSize: 14,
       height: 1.4,
+      fontFamily: 'Poppins-Light',
       decoration: TextDecoration.none,
       color: Colors.black);
 
@@ -45,6 +64,7 @@ class AppTextStyle {
       fontWeight: FontWeight.w600,
       fontSize: 19,
       height: 1.6,
+      fontFamily: 'Poppins-Light',
       decoration: TextDecoration.none,
       color: AppTheme.color3);
   static const heading3CustomColor = TextStyle(
@@ -58,6 +78,7 @@ class AppTextStyle {
       fontWeight: FontWeight.w600,
       fontSize: 14,
       height: 1.4,
+      fontFamily: 'Poppins-Light',
       decoration: TextDecoration.none,
       color: Colors.white);
 
@@ -71,16 +92,18 @@ class AppTextStyle {
       decoration: TextDecoration.none);
 
   static const heading4Black = TextStyle(
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight.bold,
       fontSize: 14,
       height: 1.4,
       color: Colors.black,
+      fontFamily: 'Poppins-Light',
       decoration: TextDecoration.none);
 
   static const heading4Grey = TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 14,
       height: 1.4,
+      fontFamily: 'Poppins-Light',
       color: AppTheme.greyApp,
       decoration: TextDecoration.none);
 

@@ -37,12 +37,19 @@ flutter:
      - family: Roboto
        fonts:
          - asset: assets/fonts/Roboto-Light.ttf
-           style: italic
      - family: NanumBarunGothic
        fonts:
          - asset: assets/fonts/NanumBarunGothic.ttf
-           style: italic
      - family: OpenSans
        fonts:
          - asset: assets/fonts/OpenSans-Light.ttf
-           style: italic
+     - family: Poppins-Black
+       fonts:
+         - asset: assets/fonts/Poppins-Black.ttf
+     - family: Poppins-Light
+       fonts:
+         - asset: assets/fonts/Poppins-Light.ttf
+     - family: Poppins-Bold
+       fonts:
+         - asset: assets/fonts/Poppins-Bold.ttf
+    

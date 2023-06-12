@@ -26,9 +26,18 @@ class AppTheme {
   static const gradient4 = Color(0xFFf283ec);
 
   static const analyse1 = Color(0xFFa07fff);
+  static const analyse11 = Color.fromARGB(255, 128, 90, 241);
+
   static const analyse2 = Color(0xFFff6de9);
+  static const analyse21 = Color.fromARGB(255, 230, 36, 200);
+
   static const analyse3 = Color(0xFF5bcdf1);
+  static const analyse31 = Color.fromARGB(255, 13, 185, 237);
+
   static const analyse4 = Color(0xFFefb463);
+  static const analyse41 = Color.fromARGB(255, 234, 160, 57);
+
+  static const adminbgColor = Color(0xFFf5f5fa);
 
   static const LinearGradient backgroundGradient = LinearGradient(
     begin: Alignment.topLeft,
@@ -38,6 +47,42 @@ class AppTheme {
       Color(0xFF97F2F3),
       Color(0xFFF1E0B0),
       Color(0xFFF1CDB0),
+    ],
+  );
+
+  static const LinearGradient gradient_analyse2 = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [
+      analyse2,
+      analyse21,
+    ],
+  );
+
+  static const LinearGradient gradient_analyse1 = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [
+      analyse1,
+      analyse11,
+    ],
+  );
+
+  static const LinearGradient gradient_analyse3 = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [
+      analyse3,
+      analyse31,
+    ],
+  );
+
+  static const LinearGradient gradient_analyse4 = LinearGradient(
+    begin: Alignment.topRight,
+    end: Alignment.bottomLeft,
+    colors: [
+      analyse4,
+      analyse41,
     ],
   );
 }

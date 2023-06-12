@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../../../provider/cart_item_provider.dart';
 
 class CartItemScreen extends StatefulWidget {
@@ -38,6 +38,12 @@ class _CartItemScreenState extends State<CartItemScreen> {
         backgroundColor: Colors.grey,
       ),
     );
+  }
+
+  Future<void> _launchUrl(String _url) async {
+    if (!await launchUrl(Uri.parse(_url))) {
+      throw Exception('Could not launch $_url');
+    }
   }
 
   @override
@@ -263,7 +269,10 @@ class _CartItemScreenState extends State<CartItemScreen> {
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(10))),
                                 child: TextButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    await _launchUrl(
+                                        'http://mnyenbaib.edu.vn/');
+                                  },
                                   child: const Text(
                                     'Thanh toán',
                                     style: AppTextStyle.heading3Light,

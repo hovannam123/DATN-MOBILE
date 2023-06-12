@@ -3,10 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_text_style.dart';
-import '../../../../model/product.dart';
-import '../../../../provider/product_detail_provider.dart';
-import '../../../../provider/product_provider.dart';
-import '../../product_detail/product_detail.dart';
+import 'package:safe_food/src/resource/model/product.dart';
+import 'package:safe_food/src/resource/modules/user/product_detail/product_detail.dart';
+import 'package:safe_food/src/resource/provider/product_detail_provider.dart';
+import 'package:safe_food/src/resource/provider/product_provider.dart';
 
 class ItemPage extends StatefulWidget {
   const ItemPage({super.key});
@@ -21,13 +21,11 @@ class _ItemPageState extends State<ItemPage> {
   @override
   void initState() {
     Provider.of<ProductProvider>(context, listen: false).getListProduct();
-
     super.initState();
   }
 
   @override
   void dispose() {
-    print(products.length);
     super.dispose();
   }
 
@@ -36,13 +34,20 @@ class _ItemPageState extends State<ItemPage> {
     final NumberFormat decimalFormat =
         NumberFormat.simpleCurrency(locale: 'vi-VN');
     final productProvider = Provider.of<ProductProvider>(context);
-    final products = productProvider.listProduct;
+    final List<Product> products = productProvider.listProduct;
     final size = MediaQuery.of(context).size;
     return Container(
-      margin: EdgeInsets.only(top: 20, left: 15),
-      child: Column(children: [
+      margin: const EdgeInsets.only(top: 20, left: 15),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Text(
+            'Sản phẩm có sẵn',
+            style: AppTextStyle.heading2Black,
+          ),
+        ),
         SizedBox(
-          height: size.height / 2.2,
+          height: size.height / 2.1,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: products.length,
@@ -50,12 +55,16 @@ class _ItemPageState extends State<ItemPage> {
               return GestureDetector(
                 onTap: () {
                   Provider.of<ProductDetailProvider>(context, listen: false)
-                      .getListProduct(products[index].id);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ProductDetail()));
+                      .getProductDetail(products[index].id!);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProductDetail(
+                                productId: products[index].id,
+                              )));
                 },
                 child: Container(
-                  margin: EdgeInsets.only(right: 20),
+                  margin: const EdgeInsets.only(right: 20),
                   width: size.width - 180,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
@@ -69,8 +78,8 @@ class _ItemPageState extends State<ItemPage> {
                     children: [
                       Container(
                         width: size.width - 180,
-                        height: size.height / 3.4,
-                        margin: EdgeInsets.all(10),
+                        height: size.height / 3.2,
+                        margin: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image:
@@ -88,6 +97,8 @@ class _ItemPageState extends State<ItemPage> {
                         child: Text(
                           '${products[index].name}',
                           style: AppTextStyle.heading3Black,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       Padding(
@@ -96,7 +107,10 @@ class _ItemPageState extends State<ItemPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                                '${decimalFormat.format(double.parse(products[index].price))}'),
+                              decimalFormat
+                                  .format(double.parse(products[index].price!)),
+                              style: AppTextStyle.h_grey_no_underline,
+                            ),
                             IconButton(
                                 onPressed: () {},
                                 icon: FaIcon(

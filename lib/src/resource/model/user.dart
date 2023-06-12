@@ -1,3 +1,5 @@
+import 'package:safe_food/src/resource/model/user_information.dart';
+
 class User {
   int? id;
   String? email;
@@ -5,6 +7,7 @@ class User {
   String? phoneNumber;
   bool? active;
   int? roleId;
+  UserInformation? userInformation;
 
   User(
       {this.id,
@@ -12,7 +15,8 @@ class User {
       this.password,
       this.phoneNumber,
       this.active,
-      this.roleId});
+      this.roleId,
+      this.userInformation});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -21,6 +25,9 @@ class User {
     phoneNumber = json['phone_number'];
     active = json['active'];
     roleId = json['role_id'];
+    userInformation = json['UserInformation'] != null
+        ? new UserInformation.fromJson(json['UserInformation'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +38,9 @@ class User {
     data['phone_number'] = this.phoneNumber;
     data['active'] = this.active;
     data['role_id'] = this.roleId;
+    if (this.userInformation != null) {
+      data['UserInformation'] = this.userInformation!.toJson();
+    }
     return data;
   }
 }

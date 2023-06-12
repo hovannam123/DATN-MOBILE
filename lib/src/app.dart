@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/src/resource/modules/user/introduce/introduce.dart';
-import 'package:safe_food/src/resource/provider/bill_item_provider.dart';
+import 'package:safe_food/src/resource/provider/bill_provider.dart';
 import 'package:safe_food/src/resource/provider/cart_item_provider.dart';
 import 'package:safe_food/src/resource/provider/facebook_provider.dart';
 import 'package:safe_food/src/resource/provider/google_provider.dart';
 import 'package:safe_food/src/resource/provider/login_provider.dart';
 import 'package:safe_food/src/resource/provider/product_detail_provider.dart';
 import 'package:safe_food/src/resource/provider/product_provider.dart';
+import 'package:safe_food/src/resource/provider/review_product_provider.dart';
+import 'package:safe_food/src/resource/provider/size_provider.dart';
 import 'package:safe_food/src/resource/provider/user_provider.dart';
 
 class MainApp extends StatelessWidget {
@@ -25,11 +27,13 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => LoginProvider()),
         ChangeNotifierProvider(create: (context) => BillProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => SizeProvider()),
+        ChangeNotifierProvider(create: (context) => ReviewProductProvider()),
       ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              fontFamily: 'NanumBarunGothic',
+              fontFamily: 'Poppins-Bold',
               scaffoldBackgroundColor: Colors.transparent,
               textTheme: Theme.of(context)
                   .textTheme

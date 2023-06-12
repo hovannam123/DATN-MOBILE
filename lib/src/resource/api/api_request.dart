@@ -1,11 +1,16 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:safe_food/src/resource/model/bill.dart';
+import 'package:safe_food/src/resource/model/bill_item.dart';
+import 'package:safe_food/src/resource/model/review_product.dart';
+import 'package:safe_food/src/resource/model/top_product_favourite.dart';
+import 'package:safe_food/src/resource/model/top_product_selling.dart';
 import '../model/cart_item.dart';
 import '../model/product.dart';
 import '../model/product_detail_model.dart';
 import '../model/user.dart';
-import '../model/bill_count.dart';
+import '../model/size.dart';
+import '../model/bill_chart.dart';
 import '../store_data/store_data.dart';
 
 class ApiRequest {
@@ -317,7 +322,7 @@ class ApiRequest {
     }
   }
 
-  Future<List<BillCount>> getBillCount() async {
+  Future<List<BillChart>> getBillCount() async {
     String url = "$urlRoot/bill-count";
     final response = await http.get(
       Uri.parse(url),
@@ -325,7 +330,242 @@ class ApiRequest {
     if (response.statusCode == 200) {
       final responseDecode =
           json.decode(response.body)["data"] as List<dynamic>;
-      return responseDecode.map((item) => BillCount.fromJson(item)).toList();
+      return responseDecode.map((item) => BillChart.fromJson(item)).toList();
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<List<BillItem>> getBillItem() async {
+    String url = "$urlRoot/all-bill-item";
+    final response = await http.get(
+      Uri.parse(url),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode =
+          json.decode(response.body)["data"] as List<dynamic>;
+      return responseDecode.map((item) => BillItem.fromJson(item)).toList();
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<List<BillItem>> getBillItemPending() async {
+    String url = "$urlRoot/all-bill-item-pending";
+    final response = await http.get(
+      Uri.parse(url),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode =
+          json.decode(response.body)["data"] as List<dynamic>;
+      return responseDecode.map((item) => BillItem.fromJson(item)).toList();
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<String> verifyOrder(int bill_id) async {
+    String url = "$urlRoot/verify-order?id=$bill_id";
+    final response = await http.put(Uri.parse(url), headers: <String, String>{
+      'Content-Type': 'application/json',
+    });
+    if (response.statusCode == 200) {
+      String message = json.decode(response.body)["message"];
+      return message;
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<String> verifyAllOrder() async {
+    String url = "$urlRoot/verify-all-order";
+    final response = await http.put(Uri.parse(url), headers: <String, String>{
+      'Content-Type': 'application/json',
+    });
+    if (response.statusCode == 200) {
+      String message = json.decode(response.body)["message"];
+      return message;
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<List<TopProductSelling>> getTopSellingProducts() async {
+    String url = "$urlRoot/top-selling-product";
+    final response = await http.get(
+      Uri.parse(url),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode =
+          json.decode(response.body)["data"] as List<dynamic>;
+      return responseDecode
+          .map((item) => TopProductSelling.fromJson(item))
+          .toList();
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<List<ProductDetailModel>> getAllProductDetail() async {
+    String url = "$urlRoot/all-product-size";
+    final response = await http.get(
+      Uri.parse(url),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode =
+          json.decode(response.body)["data"] as List<dynamic>;
+      return responseDecode
+          .map((product) => ProductDetailModel.fromJson(product))
+          .toList();
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<List<Size>> getAllSize(String token) async {
+    String url = "$urlRoot/all-size";
+    final response = await http.get(Uri.parse(url), headers: {
+      'Authorization': 'Bearer $token',
+    });
+    if (response.statusCode == 200) {
+      final responseDecode =
+          json.decode(response.body)["data"] as List<dynamic>;
+      return responseDecode.map((product) => Size.fromJson(product)).toList();
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<String> createSize(Size size) async {
+    String url = "$urlRoot/create-size";
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'size_name': size.sizeName,
+        'weigh': size.weigh,
+        'height': size.height
+      }),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode = json.decode(response.body)["message"];
+      return responseDecode;
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<String> deleteSize(int sizeId) async {
+    String url = "$urlRoot/delete-size?id=$sizeId";
+    final response = await http.delete(
+      Uri.parse(url),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode = json.decode(response.body)["message"];
+      return responseDecode;
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<List<TopProductFavourite>> getTopProductFavourite() async {
+    String url = "$urlRoot/top-product-favourite";
+    final response = await http.get(
+      Uri.parse(url),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode =
+          json.decode(response.body)["data"] as List<dynamic>;
+      return responseDecode
+          .map((product) => TopProductFavourite.fromJson(product))
+          .toList();
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<List<ReviewProduct>> getReviewProduct(int product_id) async {
+    String url = "$urlRoot/all-review-product?product_id=$product_id";
+    final response = await http.get(
+      Uri.parse(url),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode =
+          json.decode(response.body)["data"] as List<dynamic>;
+      return responseDecode
+          .map((product) => ReviewProduct.fromJson(product))
+          .toList();
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<String> createComment(
+      String content, int userId, int productId) async {
+    String url =
+        "$urlRoot/create-comment?user_id=$userId&product_id=$productId";
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, dynamic>{'content': content}),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode = json.decode(response.body)["message"];
+      return responseDecode;
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<List<Product>> getProductFavourite(int userId) async {
+    String url = "$urlRoot/all-product-favourite?user_id=$userId";
+    final response = await http.get(
+      Uri.parse(url),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode =
+          json.decode(response.body)["data"] as List<dynamic>;
+      return responseDecode
+          .map((product) => Product.fromJson(product["Product"]))
+          .toList();
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<String> deleteProductFavourite(int productId, int userId) async {
+    String url = "$urlRoot/delete-product-favourite?user_id=$userId";
+    final response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, dynamic>{'product_id': productId}),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode = json.decode(response.body)["message"];
+      return responseDecode;
+    } else {
+      throw Exception('${json.decode(response.body)["message"]}');
+    }
+  }
+
+  Future<String> createProductFavourite(int productId, int userId) async {
+    String url = "$urlRoot/create-product-favourite?user_id=$userId";
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, dynamic>{'product_id': productId}),
+    );
+    if (response.statusCode == 200) {
+      final responseDecode = json.decode(response.body)["message"];
+      return responseDecode;
     } else {
       throw Exception('${json.decode(response.body)["message"]}');
     }

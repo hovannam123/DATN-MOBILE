@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_color.dart';
-import 'package:safe_food/src/resource/model/bill_count.dart';
-import 'package:safe_food/src/resource/provider/bill_item_provider.dart';
+import 'package:safe_food/src/resource/model/bill_chart.dart';
+import 'package:safe_food/src/resource/provider/bill_provider.dart';
 
 class LineChartSample2 extends StatefulWidget {
   const LineChartSample2({super.key});
@@ -15,109 +15,127 @@ class LineChartSample2 extends StatefulWidget {
 class _LineChartSample2State extends State<LineChartSample2> {
   List<Color> gradientColors = [AppTheme.analyse1, AppTheme.analyse2];
 
-  bool showAvg = false;
+  bool showIncome = false;
 
   @override
   void initState() {
     Provider.of<BillProvider>(context, listen: false).getListBillCount();
+
     super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final billProvider = Provider.of<BillProvider>(context);
+    return billProvider.isLoad
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Stack(
+            children: <Widget>[
+              AspectRatio(
+                aspectRatio: 1.4,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 24,
+                    bottom: 12,
+                  ),
+                  child: LineChart(
+                    showIncome ? incomeData() : mainData(),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 65,
+                height: 34,
+                child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      showIncome = !showIncome;
+                    });
+                  },
+                  child: Text(
+                    'revenue',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: showIncome
+                          ? Colors.black.withOpacity(0.5)
+                          : Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
   }
 
   List<FlSpot> drawpoint() {
     final billProvider = Provider.of<BillProvider>(context);
-    final List<BillCount> listBillCount = billProvider.listBillCount;
+    final List<BillChart> listBillCount = billProvider.listBillCount;
+    listBillCount.sort((a, b) => a.date!.compareTo(b.date!));
     List<FlSpot> points = [];
-    for (BillCount order in listBillCount) {
+    for (BillChart order in listBillCount) {
       points.add(FlSpot(order.date!.day.toDouble(), order.count!.toDouble()));
     }
     return points;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: 1.4,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              top: 24,
-              bottom: 12,
-            ),
-            child: LineChart(
-              showAvg ? avgData() : mainData(),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 60,
-          height: 34,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
-            child: Text(
-              'avg',
-              style: TextStyle(
-                fontSize: 12,
-                color: showAvg ? Colors.black.withOpacity(0.5) : Colors.black,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+  double getMaxX() {
+    final billProvider = Provider.of<BillProvider>(context);
+    final listBillCount = billProvider.listBillCount as List<dynamic>;
+    listBillCount.sort((a, b) => a.date!.compareTo(b.date!));
+    return listBillCount[listBillCount.length - 1].date!.day.toDouble();
+  }
+
+  List<FlSpot> drawpointIncome() {
+    final billProvider = Provider.of<BillProvider>(context);
+    final List<BillChart> listBillCount = billProvider.listBillCount;
+    listBillCount.sort((a, b) => a.date!.compareTo(b.date!));
+    List<FlSpot> points = [];
+    for (BillChart order in listBillCount) {
+      points.add(FlSpot(order.date!.day.toDouble(),
+          double.parse(order.totalPayment!) / 1000000));
+    }
+    return points;
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    DateTime dateTime = DateTime.now(); // Đây là ngày tháng hiện tại
+    int month = dateTime.month;
     const style = TextStyle(
       fontWeight: FontWeight.bold,
       fontSize: 16,
     );
     Widget text;
+
     switch (value.toInt()) {
+      case 1:
+        text = Text('1/$month', style: style);
+        break;
+      case 5:
+        text = Text('5/$month', style: style);
+        break;
       case 10:
-        text = const Text('10DAY', style: style);
+        text = Text('10/$month', style: style);
+        break;
+      case 15:
+        text = Text('15/$month', style: style);
         break;
       case 20:
-        text = const Text('20DAY', style: style);
+        text = Text('20/$month', style: style);
         break;
-      case 31:
-        text = const Text('30DAY', style: style);
+      case 25:
+        text = Text('25/$month', style: style);
         break;
-
-      // case 2:
-      //   text = const Text('MON', style: style);
-      //   break;
-      // case 3:
-      //   text = const Text('TUE', style: style);
-      //   break;
-      // case 4:
-      //   text = const Text('WED', style: style);
-      //   break;
-      // case 5:
-      //   text = const Text('THU', style: style);
-      //   break;
-      // case 6:
-      //   text = const Text('FRI', style: style);
-      //   break;
-      // case 7:
-      //   text = const Text('SAT', style: style);
-      //   break;
-      // case 8:
-      //   text = const Text('SUN', style: style);
-      //   break;
+      case 30:
+        text = Text('30/$month', style: style);
+        break;
       default:
-        text = const Text('', style: style);
+        text = Text('', style: style);
         break;
     }
 
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: text,
-    );
+    return SideTitleWidget(axisSide: meta.axisSide, child: text);
   }
 
   Widget leftTitleWidgets(double value, TitleMeta meta) {
@@ -136,6 +154,35 @@ class _LineChartSample2State extends State<LineChartSample2> {
       case 10:
         text = '10';
         break;
+      case 15:
+        text = '15';
+        break;
+      default:
+        return Container();
+    }
+
+    return Text(text, style: style, textAlign: TextAlign.left);
+  }
+
+  Widget leftTitleWidgetsIncome(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 15,
+    );
+    String text;
+    switch (value.toInt()) {
+      case 1:
+        text = '1M';
+        break;
+      case 3:
+        text = '3M';
+        break;
+      case 5:
+        text = '5M';
+        break;
+      case 7:
+        text = '7M';
+        break;
       default:
         return Container();
     }
@@ -152,12 +199,12 @@ class _LineChartSample2State extends State<LineChartSample2> {
         verticalInterval: 1,
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: Colors.transparent,
+            color: Colors.grey.shade300,
           );
         },
         getDrawingVerticalLine: (value) {
           return FlLine(
-            color: Colors.transparent,
+            color: Colors.grey.shade300,
           );
         },
       ),
@@ -182,7 +229,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
             showTitles: true,
             interval: 1,
             getTitlesWidget: leftTitleWidgets,
-            reservedSize: 42,
+            reservedSize: 30,
           ),
         ),
       ),
@@ -190,10 +237,10 @@ class _LineChartSample2State extends State<LineChartSample2> {
         show: true,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      minX: 0,
-      maxX: 31,
+      minX: 1,
+      maxX: getMaxX(),
       minY: 0,
-      maxY: 15,
+      maxY: 20,
       lineBarsData: [
         LineChartBarData(
           spots: drawpoint(),
@@ -219,9 +266,8 @@ class _LineChartSample2State extends State<LineChartSample2> {
     );
   }
 
-  LineChartData avgData() {
+  LineChartData incomeData() {
     return LineChartData(
-      lineTouchData: LineTouchData(enabled: false),
       gridData: FlGridData(
         show: true,
         drawHorizontalLine: true,
@@ -229,13 +275,13 @@ class _LineChartSample2State extends State<LineChartSample2> {
         horizontalInterval: 1,
         getDrawingVerticalLine: (value) {
           return FlLine(
-            color: Color(0xff37434d),
+            color: Colors.grey.shade300,
             strokeWidth: 1,
           );
         },
         getDrawingHorizontalLine: (value) {
           return FlLine(
-            color: Color(0xff37434d),
+            color: Colors.grey.shade300,
             strokeWidth: 1,
           );
         },
@@ -253,7 +299,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            getTitlesWidget: leftTitleWidgets,
+            getTitlesWidget: leftTitleWidgetsIncome,
             reservedSize: 42,
             interval: 1,
           ),
@@ -269,21 +315,13 @@ class _LineChartSample2State extends State<LineChartSample2> {
         show: true,
         border: Border.all(color: const Color(0xff37434d)),
       ),
-      minX: 0,
-      maxX: 12,
+      minX: 1,
+      maxX: getMaxX(),
       minY: 0,
-      maxY: 6,
+      maxY: 7,
       lineBarsData: [
         LineChartBarData(
-          spots: const [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
+          spots: drawpointIncome(),
           isCurved: true,
           gradient: LinearGradient(
             colors: [

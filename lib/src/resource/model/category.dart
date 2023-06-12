@@ -1,7 +1,7 @@
 class Category {
   int? id;
   String? name;
-  int? deleteFlag;
+  bool? deleteFlag;
 
   Category({this.id, this.name, this.deleteFlag});
 

@@ -42,6 +42,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
@@ -156,18 +164,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               .login(
                                   emailController.text, passwordController.text)
                               .then((token) async {
-                            User? user = await StoreData().retrieveUser();
-                            if (user.roleId == 1) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => AdminHomePage()));
-                            } else {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => HomePage()));
-                            }
+                            await StoreData().retrieveUser().then((user) => {
+                                  if (user.roleId == 1)
+                                    {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AdminHomePage()))
+                                    }
+                                  else if (user.roleId == 2)
+                                    {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => HomePage()))
+                                    }
+                                });
                           }).catchError((error) {
                             if (error is Exception) {
                               showDialog(

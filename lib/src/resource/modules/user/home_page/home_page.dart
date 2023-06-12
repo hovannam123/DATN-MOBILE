@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:safe_food/config/app_color.dart';
+import 'package:safe_food/config/app_text_style.dart';
+import 'package:safe_food/src/resource/modules/user/home_page/components/favourite/favourite_screen.dart';
+import 'package:safe_food/src/resource/modules/user/home_page/components/product/favourite_item.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../cart_item/cart_item_screen.dart';
-import 'components/category_bar.dart';
-import 'components/item_page.dart';
-import 'components/search_bar.dart';
+import 'components/product/category_bar.dart';
+import 'components/product/item_page.dart';
+import 'components/product/search_bar.dart';
+import 'components/product/top_product_selling_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,11 +24,15 @@ class _HomePageState extends State<HomePage> {
 
   final tabs = [
     Column(
-      children: [SearchBar(), CategoryBar(), ItemPage()],
+      children: const [
+        SearchBar(),
+        CategoryBar(),
+        ItemPage(),
+        TopProductSellingItem(),
+        TopFavouriteItem()
+      ],
     ),
-    Center(
-      child: Text('bbb'),
-    ),
+    FavouriteScreen(),
     Center(
       child: Text('cccc'),
     ),
@@ -65,14 +73,14 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                           builder: (context) => CartItemScreen()));
                 },
-                icon: FaIcon(
+                icon: const FaIcon(
                   FontAwesomeIcons.bagShopping,
                 ))
           ],
         ),
         body: SingleChildScrollView(child: tabs[_selectedTab]),
         bottomNavigationBar: Padding(
-          padding: EdgeInsets.only(bottom: 20, left: 10, right: 10),
+          padding: const EdgeInsets.only(bottom: 20, left: 10, right: 10),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: BottomNavigationBar(
@@ -83,11 +91,12 @@ class _HomePageState extends State<HomePage> {
               }),
               selectedItemColor: AppTheme.color1,
               unselectedItemColor: Colors.black,
+              selectedLabelStyle: AppTextStyle.heading3Light,
               items: const [
                 BottomNavigationBarItem(
                     icon: FaIcon(FontAwesomeIcons.house), label: "Home"),
                 BottomNavigationBarItem(
-                    icon: FaIcon(FontAwesomeIcons.solidBookmark),
+                    icon: FaIcon(FontAwesomeIcons.solidHeart),
                     label: "Favorite"),
                 BottomNavigationBarItem(
                     icon: FaIcon(FontAwesomeIcons.solidUser), label: "Profile"),

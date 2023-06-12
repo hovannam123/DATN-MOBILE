@@ -1,4 +1,3 @@
-
 import 'package:safe_food/src/resource/model/category.dart';
 
 class Product {
@@ -8,8 +7,8 @@ class Product {
   String? imageOrigin;
   String? description;
   String? price;
-  int? status;
-  int? deleteFlag;
+  bool? status;
+  bool? deleteFlag;
   Category? category;
 
   Product(
