@@ -14,16 +14,6 @@ class StoreData {
     return prefs.getString('token');
   }
 
-  void storeUserId(int user_id) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('user_id', user_id);
-  }
-
-  Future<int?> retrieveUserId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('user_id');
-  }
-
   void storeUser(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String json = jsonEncode(user.toJson());

@@ -20,7 +20,7 @@ class ApiRequest {
 
   static ApiRequest get instance => _instance ??= ApiRequest._();
 
-  String urlRoot = "http://192.168.1.23:3000/api/v1";
+  String urlRoot = "http://localhost:3000/api/v1";
 
   Future<String> login(String email, String password) async {
     String url = "$urlRoot/login";
@@ -164,8 +164,8 @@ class ApiRequest {
     }
   }
 
-  Future<String> createPayment() async {
-    String url = "$urlRoot/payment";
+  Future<String> createPayment(int userId) async {
+    String url = "$urlRoot/payment?user_id=$userId";
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -178,22 +178,6 @@ class ApiRequest {
       return responseDecode;
     } else {
       throw Exception('Failed to create payment');
-    }
-  }
-
-  Future<bool> confirmPayment() async {
-    String url = "$urlRoot/success";
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      // payment failed
-      return false;
     }
   }
 
