@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:safe_food/src/resource/api/api_request.dart';
+import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
+import 'package:safe_food/src/resource/provider/auth_provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -19,6 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    final authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -197,12 +199,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   height: 44,
                   color: AppTheme.brandBlue,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (!checkbox) {
                         print("dong y dieu khoan");
                       } else {
-                        ApiRequest.instance
-                            .register(
+                        await authProvider
+                            .signup(
                                 emailController.text,
                                 passwordController.text,
                                 phoneNumberController.text)

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:safe_food/src/resource/api/api_request.dart';
 import 'package:safe_food/src/resource/model/product.dart';
 import 'package:safe_food/src/resource/model/top_product_favourite.dart';
 import 'package:safe_food/src/resource/model/top_product_selling.dart';
 import 'package:safe_food/src/resource/model/user.dart';
+import 'package:safe_food/src/resource/repositories/product_repo.dart';
 import 'package:safe_food/src/resource/store_data/store_data.dart';
 
 class ProductProvider with ChangeNotifier {
+  final ProductRepository _productRepository = ProductRepository();
+
   List<Product> _listProduct = [];
   List<TopProductSelling> _listTopSelling = [];
   List<TopProductFavourite> _listTopFavourite = [];
@@ -20,21 +22,21 @@ class ProductProvider with ChangeNotifier {
 
   void getListProduct() async {
     isLoad = true;
-    _listProduct = await ApiRequest.instance.getAllProduct();
+    _listProduct = await _productRepository.getListProduct();
     isLoad = false;
     notifyListeners();
   }
 
   void getListTopSelling() async {
     isLoad = true;
-    _listTopSelling = await ApiRequest.instance.getTopSellingProducts();
+    _listTopSelling = await _productRepository.getListTopSelling();
     isLoad = false;
     notifyListeners();
   }
 
   void getListTopFavourite() async {
     isLoad = true;
-    _listTopFavourite = await ApiRequest.instance.getTopProductFavourite();
+    _listTopFavourite = await _productRepository.getListTopFavourite();
     isLoad = false;
     notifyListeners();
   }
@@ -42,7 +44,9 @@ class ProductProvider with ChangeNotifier {
   void getListFavorite() async {
     isLoad = true;
     User? user = await StoreData().retrieveUser();
-    _listFavourite = await ApiRequest.instance.getProductFavourite(user.id!);
+    print(_listFavourite);
+    print(user.toJson());
+    _listFavourite = await _productRepository.getListFavorite(user.id!);
     isLoad = false;
     notifyListeners();
   }
@@ -51,7 +55,7 @@ class ProductProvider with ChangeNotifier {
     isLoad = true;
     User? user = await StoreData().retrieveUser();
     String message =
-        await ApiRequest.instance.deleteProductFavourite(productId, user.id!);
+        await _productRepository.deleteProductFavourite(user.id!, productId);
     isLoad = false;
     notifyListeners();
     return message;
@@ -61,7 +65,7 @@ class ProductProvider with ChangeNotifier {
     isLoad = true;
     User? user = await StoreData().retrieveUser();
     String message =
-        await ApiRequest.instance.createProductFavourite(productId, user.id!);
+        await _productRepository.createProductFavourite(user.id!, productId);
     isLoad = false;
     notifyListeners();
     return message;

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:safe_food/src/resource/store_data/store_data.dart';
+import 'package:safe_food/src/resource/repositories/size_repo.dart';
 
-import '../api/api_request.dart';
 import '../model/size.dart';
 
 class SizeProvider with ChangeNotifier {
+  final SizeRepository _sizeRepository = SizeRepository();
   List<Size> _listSize = [];
   bool isLoad = false;
 
@@ -12,23 +12,24 @@ class SizeProvider with ChangeNotifier {
 
   void getListSize() async {
     isLoad = true;
-    String? token = await StoreData().retrieveToken();
-    _listSize = await ApiRequest.instance.getAllSize(token!);
+    _listSize = await _sizeRepository.getListSize();
     isLoad = false;
     notifyListeners();
   }
 
   Future<String> createSize(Size size) async {
     isLoad = true;
-    String message = await ApiRequest.instance.createSize(size);
+    String message = await _sizeRepository.createSize(size);
     isLoad = false;
     notifyListeners();
     return message;
   }
 
-  Future<String> deleteSize(int sizeId) async {
+  Future<String> deleteSize(
+      int sizeId, String sizeName, String weigh, String height) async {
     isLoad = true;
-    String message = await ApiRequest.instance.deleteSize(sizeId);
+    String message =
+        await _sizeRepository.updateSize(sizeId, sizeName, weigh, height);
     isLoad = false;
     notifyListeners();
     return message;

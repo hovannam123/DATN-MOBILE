@@ -89,8 +89,8 @@ class _BillItemScreenState extends State<BillItemScreen> {
                         child: Center(
                             child: Text(
                           '${listBillItem.length}',
-                          style: const TextStyle(
-                              color: AppTheme.analyse2,
+                          style: TextStyle(
+                              color: Colors.pink.shade200,
                               fontSize: 18,
                               fontWeight: FontWeight.bold),
                         )),
@@ -101,7 +101,7 @@ class _BillItemScreenState extends State<BillItemScreen> {
                 floatingActionButton: Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: FloatingActionButton.extended(
-                    backgroundColor: AppTheme.analyse2,
+                    backgroundColor: Colors.pink.shade200,
                     onPressed: () async {
                       await billProvider
                           .verifyAllOrder()
@@ -138,9 +138,9 @@ class _BillItemScreenState extends State<BillItemScreen> {
                                   children: [
                                     Container(
                                       height: 45,
-                                      decoration: const BoxDecoration(
-                                          gradient: AppTheme.gradient_analyse2,
-                                          borderRadius: BorderRadius.only(
+                                      decoration: BoxDecoration(
+                                          color: Colors.pink.shade200,
+                                          borderRadius: const BorderRadius.only(
                                               topLeft: Radius.circular(10),
                                               topRight: Radius.circular(10))),
                                       child: Row(
@@ -247,11 +247,12 @@ class _BillItemScreenState extends State<BillItemScreen> {
                                                   Container(
                                                     height: 25,
                                                     width: 25,
-                                                    decoration: const BoxDecoration(
-                                                        gradient: AppTheme
-                                                            .gradient_analyse2,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .pink.shade200,
                                                         borderRadius:
-                                                            BorderRadius.all(
+                                                            const BorderRadius
+                                                                    .all(
                                                                 Radius.circular(
                                                                     (50)))),
                                                     child: Center(
@@ -281,11 +282,11 @@ class _BillItemScreenState extends State<BillItemScreen> {
                                         child: Container(
                                           width: size.width / 3.4,
                                           height: 27,
-                                          decoration: const BoxDecoration(
-                                              gradient:
-                                                  AppTheme.gradient_analyse2,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(15))),
+                                          decoration: BoxDecoration(
+                                              color: Colors.pink.shade200,
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(15))),
                                           child: const Center(
                                             child: Text(
                                               "Verify",

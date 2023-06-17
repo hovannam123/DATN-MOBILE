@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
-import 'package:safe_food/src/resource/api/api_request.dart';
 import 'package:safe_food/src/resource/model/review_product.dart';
+import 'package:safe_food/src/resource/provider/cart_item_provider.dart';
 import 'package:safe_food/src/resource/provider/product_detail_provider.dart';
-import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:safe_food/src/resource/provider/product_provider.dart';
 import 'package:safe_food/src/resource/provider/review_product_provider.dart';
-import 'package:safe_food/src/resource/store_data/store_data.dart';
+import 'package:safe_food/src/resource/utils/enums/helpers.dart';
 
 class ProductDetail extends StatefulWidget {
   const ProductDetail({super.key, @required this.productId});
@@ -35,30 +35,17 @@ class _ProductDetailState extends State<ProductDetail>
   @override
   void initState() {
     _tabController = TabController(length: 3, vsync: this);
-    Provider.of<ReviewProductProvider>(context, listen: false)
-        .getListComment(widget.productId!);
+    Provider.of<ReviewProvider>(context, listen: false)
+        .getListReview(widget.productId!);
     super.initState();
   }
 
   void reloadUI() {
     setState(() {
-      Provider.of<ReviewProductProvider>(context, listen: false)
-          .getListComment(widget.productId!);
+      Provider.of<ReviewProvider>(context, listen: false)
+          .getListReview(widget.productId!);
       contentController.text = "";
     });
-  }
-
-  void showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-              color: AppTheme.white, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.grey,
-      ),
-    );
   }
 
   @override
@@ -69,10 +56,11 @@ class _ProductDetailState extends State<ProductDetail>
 
     final productProvider = Provider.of<ProductProvider>(context);
 
-    final reviewProductProvider = Provider.of<ReviewProductProvider>(context);
+    final reviewProductProvider = Provider.of<ReviewProvider>(context);
     final List<ReviewProduct> comments = reviewProductProvider.listComment;
 
     final productdetailProvider = Provider.of<ProductDetailProvider>(context);
+    final cartProvider = Provider.of<CartItemProvider>(context);
     final productDetail = productdetailProvider.productDetail;
     return Container(
       decoration: const BoxDecoration(gradient: AppTheme.backgroundGradient),
@@ -97,47 +85,41 @@ class _ProductDetailState extends State<ProductDetail>
                       child: TextButton(
                         onPressed: () async {
                           if (index_size != -1) {
-                            await StoreData().retrieveUser().then((user) => {
-                                  print(user.id),
-                                  ApiRequest.instance
-                                      .addToCart(
-                                          productDetail.id,
-                                          productDetail
-                                              .sizeData[index_size].size.id,
-                                          1,
-                                          user.id!)
-                                      .then((message) => {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(SnackBar(
-                                              content: Text(
-                                                '$message',
-                                                style: const TextStyle(
-                                                    color: AppTheme.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              backgroundColor: Colors.grey,
-                                            ))
-                                          })
-                                      // ignore: invalid_return_type_for_catch_error
-                                      .catchError((err) => {
-                                            if (err is Exception)
-                                              {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                    err.toString().split(
-                                                        "Exception: ")[1],
-                                                    style: const TextStyle(
-                                                        color: AppTheme.white,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  backgroundColor: Colors.grey,
-                                                ))
-                                              }
-                                          })
-                                });
+                            await cartProvider
+                                .addToCart(
+                                    productDetail.id,
+                                    productDetail.sizeData[index_size].size.id,
+                                    1)
+                                .then((message) => {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text(
+                                          '$message',
+                                          style: const TextStyle(
+                                              color: AppTheme.white,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        backgroundColor: Colors.grey,
+                                      ))
+                                    })
+                                // ignore: invalid_return_type_for_catch_error
+                                .catchError((err) => {
+                                      if (err is Exception)
+                                        {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text(
+                                              err
+                                                  .toString()
+                                                  .split("Exception: ")[1],
+                                              style: const TextStyle(
+                                                  color: AppTheme.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            backgroundColor: Colors.grey,
+                                          ))
+                                        }
+                                    });
                           } else {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
@@ -186,7 +168,9 @@ class _ProductDetailState extends State<ProductDetail>
                       onPressed: () async {
                         await productProvider
                             .createProductFavourite(widget.productId!)
-                            .then((message) => {showSnackbar(message)});
+                            .then((message) => {showSnackbar(context, message)})
+                            .catchError(
+                                (error) => {showErrorDialog(context, error)});
                       },
                       icon: const FaIcon(FontAwesomeIcons.heartCirclePlus)),
                   IconButton(
@@ -386,7 +370,9 @@ class _ProductDetailState extends State<ProductDetail>
                                 Column(
                                   children: [
                                     comments.isEmpty
-                                        ? const Center(
+                                        ? const Padding(
+                                            padding:
+                                                EdgeInsets.only(bottom: 150),
                                             child: Text(
                                               'Không có bình luận',
                                               style: AppTextStyle.heading3Black,
@@ -537,13 +523,13 @@ class _ProductDetailState extends State<ProductDetail>
                                                         contentController.text,
                                                         widget.productId!)
                                                     .then((message) => {
-                                                          showSnackbar(message)
+                                                          showSnackbar(
+                                                              context, message)
+                                                        })
+                                                    .catchError((error) => {
+                                                          showErrorDialog(
+                                                              context, error)
                                                         });
-                                                // .catchError((message) =>
-                                                //     {
-                                                //       showSnackbar(
-                                                //           message)
-                                                //     });
                                                 reloadUI();
                                               },
                                               icon: const Icon(Icons

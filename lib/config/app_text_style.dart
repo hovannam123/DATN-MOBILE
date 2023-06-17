@@ -29,7 +29,6 @@ class AppTextStyle {
   static const heading2Light = TextStyle(
       fontWeight: FontWeight.w600,
       fontSize: 20,
-      height: 1.3,
       fontFamily: 'Poppins-Light',
       decoration: TextDecoration.none,
       color: AppTheme.white);
@@ -93,9 +92,16 @@ class AppTextStyle {
 
   static const heading4Black = TextStyle(
       fontWeight: FontWeight.bold,
-      fontSize: 14,
-      height: 1.4,
-      color: Colors.black,
+      fontSize: 12,
+      height: 1.2,
+      color: Colors.black54,
+      fontFamily: 'Poppins-Light',
+      decoration: TextDecoration.none);
+  static const heading4Red = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
+      height: 1.2,
+      color: Colors.red,
       fontFamily: 'Poppins-Light',
       decoration: TextDecoration.none);
 

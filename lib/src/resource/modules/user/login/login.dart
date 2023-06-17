@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:safe_food/src/resource/api/api_request.dart';
 import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
 import 'package:safe_food/src/resource/model/user.dart';
 import 'package:safe_food/src/resource/modules/admin/home_page_admin/admin_home_page.dart';
-import 'package:safe_food/src/resource/provider/login_provider.dart';
+import 'package:safe_food/src/resource/provider/auth_provider.dart';
 import 'package:safe_food/src/resource/store_data/store_data.dart';
+import 'package:safe_food/src/resource/utils/enums/app_strings.dart';
+import 'package:safe_food/src/resource/utils/enums/helpers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../forget_password/forget_password.dart';
@@ -53,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    final loginProvider = Provider.of<LoginProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
 
     return Container(
       color: Colors.white,
@@ -160,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_loginKey.currentState!.validate()) {
-                          await ApiRequest.instance
+                          await authProvider
                               .login(
                                   emailController.text, passwordController.text)
                               .then((token) async {
@@ -182,38 +183,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
                                 });
                           }).catchError((error) {
-                            if (error is Exception) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return CupertinoAlertDialog(
-                                    title: const Text("Fail to sign in"),
-                                    actions: [
-                                      CupertinoDialogAction(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text("Ok"),
-                                      ),
-                                    ],
-                                    content: Text(error
-                                        .toString()
-                                        .split("Exception: ")[1]),
-                                  );
-                                },
-                              );
-                            }
+                            showErrorDialog(context, error);
                           });
                         }
                       },
-                      child: loginProvider.isLoad
-                          ? const CircularProgressIndicator(
-                              color: Colors.black,
-                            )
-                          : const Text(
-                              'Đăng nhập',
-                              style: AppTextStyle.heading3Light,
-                            ),
+                      child: const Text(
+                        'Đăng nhập',
+                        style: AppTextStyle.heading3Light,
+                      ),
                     ),
                   ),
                   Center(
@@ -224,7 +201,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ForgetPassword()));
+                                builder: (context) => SendEmail(
+                                      isResetPW: true,
+                                    )));
                       },
                     ),
                   )

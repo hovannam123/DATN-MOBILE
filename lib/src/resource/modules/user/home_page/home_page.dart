@@ -4,6 +4,7 @@ import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
 import 'package:safe_food/src/resource/modules/user/home_page/components/favourite/favourite_screen.dart';
 import 'package:safe_food/src/resource/modules/user/home_page/components/product/favourite_item.dart';
+import 'package:safe_food/src/resource/modules/user/profile/my_profile.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../cart_item/cart_item_screen.dart';
@@ -33,21 +34,11 @@ class _HomePageState extends State<HomePage> {
       ],
     ),
     FavouriteScreen(),
-    Center(
-      child: Text('cccc'),
-    ),
+    MyProfile(),
     Center(
       child: Text('ho tro'),
     ),
   ];
-
-  Future<void> _launchUrl(String url) async {
-    if (await launchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.platformDefault);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +50,7 @@ class _HomePageState extends State<HomePage> {
           elevation: 0,
           leading: IconButton(
             icon: FaIcon(FontAwesomeIcons.bars),
-            onPressed: () async {
-              // String url = await ApiRequest.instance.createPayment();
-              // _launchUrl(url);
-              // _launchUrl('http://192.168.1.23:3000/api/v1/all-category');
-            },
+            onPressed: () {},
           ),
           actions: [
             IconButton(

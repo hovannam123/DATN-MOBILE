@@ -5,7 +5,7 @@ import 'package:safe_food/src/resource/provider/bill_provider.dart';
 import 'package:safe_food/src/resource/provider/cart_item_provider.dart';
 import 'package:safe_food/src/resource/provider/facebook_provider.dart';
 import 'package:safe_food/src/resource/provider/google_provider.dart';
-import 'package:safe_food/src/resource/provider/login_provider.dart';
+import 'package:safe_food/src/resource/provider/auth_provider.dart';
 import 'package:safe_food/src/resource/provider/product_detail_provider.dart';
 import 'package:safe_food/src/resource/provider/product_provider.dart';
 import 'package:safe_food/src/resource/provider/review_product_provider.dart';
@@ -24,11 +24,11 @@ class MainApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ProductProvider()),
         ChangeNotifierProvider(create: (context) => ProductDetailProvider()),
         ChangeNotifierProvider(create: (context) => CartItemProvider()),
-        ChangeNotifierProvider(create: (context) => LoginProvider()),
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => BillProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => SizeProvider()),
-        ChangeNotifierProvider(create: (context) => ReviewProductProvider()),
+        ChangeNotifierProvider(create: (context) => ReviewProvider()),
       ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,

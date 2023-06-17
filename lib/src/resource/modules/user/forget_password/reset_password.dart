@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
-
-import '../../../api/api_request.dart';
+import 'package:safe_food/src/resource/provider/auth_provider.dart';
+import 'package:safe_food/src/resource/utils/enums/helpers.dart';
 import '../login/login.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -19,7 +20,15 @@ class _ResetPasswordState extends State<ResetPassword> {
   final TextEditingController confirmPWController = TextEditingController();
 
   @override
+  void dispose() {
+    passwordController.dispose();
+    confirmPWController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -132,17 +141,18 @@ class _ResetPasswordState extends State<ResetPassword> {
                       backgroundColor:
                           MaterialStateProperty.all<Color>(AppTheme.brandBlue),
                     ),
-                    onPressed: () {
-                      ApiRequest.instance
+                    onPressed: () async {
+                      await authProvider
                           .resetPassword(widget.email, passwordController.text)
                           .then((message) => {
-                                print(message),
+                                showSnackbar(context, message),
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => LoginScreen()))
                               })
-                          .catchError((message) => {print(message)});
+                          .catchError(
+                              (error) => {showErrorDialog(context, error)});
                     },
                     child: const Text(
                       'Xác minh',

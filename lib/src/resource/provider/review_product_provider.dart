@@ -1,30 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:safe_food/src/resource/model/user.dart';
+import 'package:safe_food/src/resource/repositories/review_repo.dart';
 import 'package:safe_food/src/resource/store_data/store_data.dart';
 
-import '../api/api_request.dart';
 import '../model/review_product.dart';
-import '../model/size.dart';
 
-class ReviewProductProvider with ChangeNotifier {
+class ReviewProvider with ChangeNotifier {
+  final ReviewRepository _reviewRepository = ReviewRepository();
   List<ReviewProduct> _listComment = [];
   bool isLoad = false;
 
   get listComment => this._listComment;
 
-  void getListComment(int product_id) async {
+  void getListReview(int productId) async {
     isLoad = true;
-    _listComment = await ApiRequest.instance.getReviewProduct(product_id);
+    _listComment = await _reviewRepository.getListReview(productId);
     isLoad = false;
     notifyListeners();
   }
 
-  Future<String> createComment(String content, int product_id) async {
+  Future<String> createComment(String content, int productId) async {
     isLoad = true;
     User? user = await StoreData().retrieveUser();
     print(user.id);
     String message =
-        await ApiRequest.instance.createComment(content, user.id!, product_id);
+        await _reviewRepository.createComment(content, productId, user.id!);
     isLoad = false;
     notifyListeners();
     return message;
