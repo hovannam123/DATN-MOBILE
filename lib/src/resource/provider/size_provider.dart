@@ -17,19 +17,18 @@ class SizeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> createSize(Size size) async {
+  Future<String> createSize(
+      String sizeName, String weigh, String height) async {
     isLoad = true;
-    String message = await _sizeRepository.createSize(size);
+    String message = await _sizeRepository.createSize(sizeName, weigh, height);
     isLoad = false;
     notifyListeners();
     return message;
   }
 
-  Future<String> deleteSize(
-      int sizeId, String sizeName, String weigh, String height) async {
+  Future<String> updateSize(int sizeId, String weigh, String height) async {
     isLoad = true;
-    String message =
-        await _sizeRepository.updateSize(sizeId, sizeName, weigh, height);
+    String message = await _sizeRepository.updateSize(sizeId, weigh, height);
     isLoad = false;
     notifyListeners();
     return message;
