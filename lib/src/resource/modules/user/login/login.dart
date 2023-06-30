@@ -31,15 +31,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   Color colorValidate = Colors.black;
+  bool passwordVisible = false;
 
   bool emailValid(String email) {
     return RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(email);
-  }
-
-  void onError(error) {
-    print('Error: $error');
   }
 
   @override
@@ -48,6 +45,13 @@ class _LoginScreenState extends State<LoginScreen> {
     passwordController.dispose();
 
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    passwordVisible = true;
+
+    super.initState();
   }
 
   @override
@@ -109,12 +113,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           hintText: 'Nhập email của bạn',
                           hintStyle: AppTextStyle.heading4Grey,
                           border: InputBorder.none,
-                          errorStyle: AppTextStyle.heading4Black),
+                          errorStyle: AppTextStyle.heading4Red),
                       validator: (input) {
                         if (!emailValid(input!)) {
                           setState(() {
                             colorValidate = Colors.red;
                           });
+                          return 'Sai định dạng email';
                         } else {
                           setState(() {
                             colorValidate = Colors.black;
@@ -140,16 +145,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: passwordController,
                       decoration: InputDecoration(
                           suffixIcon: IconButton(
-                            icon: Image.asset('assets/images/btnCancel.png'),
+                            icon: Icon(
+                              passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.black,
+                            ),
                             onPressed: () {
-                              passwordController.clear();
+                              setState(() {
+                                passwordVisible
+                                    ? passwordVisible = false
+                                    : passwordVisible = true;
+                              });
                             },
                           ),
                           hintText: 'Nhập mật khẩu',
                           hintStyle: AppTextStyle.heading4Grey,
                           border: InputBorder.none,
                           errorStyle: AppTextStyle.heading2Medium),
-                      obscureText: true,
+                      obscureText: passwordVisible,
                       validator: (value) {},
                     ),
                   ),
@@ -161,6 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: ElevatedButton(
                       onPressed: () async {
                         if (_loginKey.currentState!.validate()) {
+                          showLoading(context);
                           await authProvider
                               .login(
                                   emailController.text, passwordController.text)

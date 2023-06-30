@@ -19,6 +19,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   @override
   void initState() {
     Provider.of<ProductProvider>(context, listen: false).getListFavorite();
+
     super.initState();
   }
 
@@ -48,7 +49,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               )
             : Container(
                 width: size.width,
-                height: size.height / 3,
+                height: size.height - 200,
                 padding: EdgeInsets.only(top: 10),
                 margin: EdgeInsets.all(5),
                 child: ListView.builder(
@@ -56,6 +57,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                   itemBuilder: (context, index) {
                     return Container(
                       height: 100,
+                      width: size.width,
                       padding: const EdgeInsets.only(top: 10),
                       margin: const EdgeInsets.only(bottom: 10),
                       decoration: BoxDecoration(
@@ -78,11 +80,11 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(
-                                    width: 300,
+                                    width: 260,
                                     child: Text(
                                       '${products[index].name}',
                                       style: AppTextStyle.heading3Black,
-                                      maxLines: 1,
+                                      maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -106,7 +108,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                                       .deleteProductFavourite(
                                           products[index].id!)
                                       .then((message) => {
-                                            showSnackbar(context, message),
+                                            showSuccessDialog(context, message),
                                             reloadUI()
                                           });
                                 },

@@ -5,26 +5,30 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
+import 'package:safe_food/src/resource/model/product_detail.dart';
 import 'package:safe_food/src/resource/model/review_product.dart';
+import 'package:safe_food/src/resource/model/size.dart';
 import 'package:safe_food/src/resource/provider/cart_item_provider.dart';
 import 'package:safe_food/src/resource/provider/product_detail_provider.dart';
 import 'package:safe_food/src/resource/provider/product_provider.dart';
 import 'package:safe_food/src/resource/provider/review_product_provider.dart';
+import 'package:safe_food/src/resource/provider/size_provider.dart';
 import 'package:safe_food/src/resource/utils/enums/helpers.dart';
 
-class ProductDetail extends StatefulWidget {
-  const ProductDetail({super.key, @required this.productId});
+class ProductDetailScreen extends StatefulWidget {
+  const ProductDetailScreen({super.key, @required this.productId});
   final int? productId;
 
   @override
-  State<ProductDetail> createState() => _ProductDetailState();
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
 
-class _ProductDetailState extends State<ProductDetail>
+class _ProductDetailScreenState extends State<ProductDetailScreen>
     with TickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController contentController = TextEditingController();
   int index_size = -1;
+  int amount = 1;
 
   @override
   void dispose() {
@@ -37,6 +41,7 @@ class _ProductDetailState extends State<ProductDetail>
     _tabController = TabController(length: 3, vsync: this);
     Provider.of<ReviewProvider>(context, listen: false)
         .getListReview(widget.productId!);
+    Provider.of<SizeProvider>(context, listen: false).getListSize();
     super.initState();
   }
 
@@ -46,6 +51,14 @@ class _ProductDetailState extends State<ProductDetail>
           .getListReview(widget.productId!);
       contentController.text = "";
     });
+  }
+
+  int getTotalStock(ProductDetail productDetail) {
+    int total = 0;
+    productDetail.sizeData!.forEach((size) {
+      total += size.amount!;
+    });
+    return total;
   }
 
   @override
@@ -89,12 +102,15 @@ class _ProductDetailState extends State<ProductDetail>
                                 .addToCart(
                                     productDetail.id,
                                     productDetail.sizeData[index_size].size.id,
-                                    1)
+                                    amount)
                                 .then((message) => {
+                                      setState(() {
+                                        amount = 1;
+                                      }),
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
                                         content: Text(
-                                          '$message',
+                                          message,
                                           style: const TextStyle(
                                               color: AppTheme.white,
                                               fontWeight: FontWeight.bold),
@@ -168,7 +184,12 @@ class _ProductDetailState extends State<ProductDetail>
                       onPressed: () async {
                         await productProvider
                             .createProductFavourite(widget.productId!)
-                            .then((message) => {showSnackbar(context, message)})
+                            .then((message) => {
+                                  Provider.of<ProductProvider>(context,
+                                          listen: false)
+                                      .getListFavorite(),
+                                  showSuccessDialog(context, message)
+                                })
                             .catchError(
                                 (error) => {showErrorDialog(context, error)});
                       },
@@ -217,7 +238,7 @@ class _ProductDetailState extends State<ProductDetail>
                     ),
                     Container(
                       width: size.width,
-                      height: 300,
+                      height: 320,
                       margin: EdgeInsets.only(top: 20),
                       padding:
                           const EdgeInsets.only(top: 10, left: 10, right: 10),
@@ -230,7 +251,8 @@ class _ProductDetailState extends State<ProductDetail>
                       child: Column(
                         children: [
                           Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 50),
+                            width: size.width,
+                            margin: const EdgeInsets.symmetric(horizontal: 30),
                             child: TabBar(
                               controller: _tabController,
                               unselectedLabelColor: Colors.black,
@@ -270,24 +292,89 @@ class _ProductDetailState extends State<ProductDetail>
                                       '${productDetail.name}',
                                       style: AppTextStyle.heading2CustomColor,
                                     ),
-                                    Text(
-                                      decimalFormat.format(
-                                          double.parse(productDetail.price)),
-                                      style: AppTextStyle.heading3CustomColor,
+                                    Row(
+                                      children: [
+                                        Text(
+                                          decimalFormat.format(double.parse(
+                                              productDetail.price)),
+                                          style:
+                                              AppTextStyle.heading3CustomColor,
+                                        ),
+                                        const SizedBox(
+                                          width: 194,
+                                        ),
+                                        Text(
+                                          'Kho: ${getTotalStock(productDetail)}',
+                                          style:
+                                              AppTextStyle.heading3CustomColor,
+                                        )
+                                      ],
                                     ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Tình trạng: ${productDetail.status ? 'Còn hàng' : 'Hết hàng'}',
-                                      style: AppTextStyle.heading3Black,
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      'Loại hàng: ${productDetail.category.name}',
-                                      style: AppTextStyle.heading3Black,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          height: 50,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Tình trạng: ${productDetail.status ? 'Còn hàng' : 'Hết hàng'}',
+                                                style:
+                                                    AppTextStyle.heading3Black,
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                'Loại hàng: ${productDetail.category.name}',
+                                                style:
+                                                    AppTextStyle.heading3Black,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Column(
+                                          children: [
+                                            const Text(
+                                              'Số lượng',
+                                              style: AppTextStyle.heading3Black,
+                                            ),
+                                            Row(
+                                              children: [
+                                                IconButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        amount++;
+                                                      });
+                                                    },
+                                                    icon: const FaIcon(
+                                                        FontAwesomeIcons
+                                                            .circlePlus)),
+                                                Text(
+                                                  amount.toString(),
+                                                  style: AppTextStyle
+                                                      .heading3Black,
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    if (amount > 1) {
+                                                      setState(() {
+                                                        amount--;
+                                                      });
+                                                    }
+                                                  },
+                                                  icon: const FaIcon(
+                                                      FontAwesomeIcons
+                                                          .circleMinus),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        )
+                                      ],
                                     ),
                                     const SizedBox(
                                       height: 10,
@@ -296,49 +383,189 @@ class _ProductDetailState extends State<ProductDetail>
                                       'Size',
                                       style: AppTextStyle.heading3Black,
                                     ),
-                                    Container(
-                                      padding: EdgeInsets.only(top: 10),
-                                      width: size.width,
-                                      height: 50,
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount:
-                                            productDetail.sizeData.length,
-                                        itemBuilder: (context, index) {
-                                          return GestureDetector(
-                                            onTap: () {
-                                              print(index_size);
-                                              setState(() {
-                                                index_size = index;
-                                              });
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          // padding: EdgeInsets.only(top: 10),
+                                          width: size.width / 1.7,
+                                          height: 40,
+                                          child: ListView.builder(
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount:
+                                                productDetail.sizeData.length,
+                                            itemBuilder: (context, index) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  print(index_size);
+                                                  setState(() {
+                                                    index_size = index;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  width: 60,
+                                                  height: 40,
+                                                  margin: const EdgeInsets.only(
+                                                      right: 10),
+                                                  decoration: BoxDecoration(
+                                                      color: index_size == index
+                                                          ? AppTheme.color2
+                                                          : null,
+                                                      border: Border.all(
+                                                          color: Colors.grey,
+                                                          width: 1,
+                                                          style: BorderStyle
+                                                              .solid),
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                                  .all(
+                                                              Radius.circular(
+                                                                  10))),
+                                                  child: Center(
+                                                    child: Text(
+                                                      '${productDetail.sizeData[index].size.sizeName}',
+                                                      style: AppTextStyle
+                                                          .h_grey_no_underline,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                        TextButton(
+                                            onPressed: () {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                        'Thông số',
+                                                        style: AppTextStyle
+                                                            .heading3Black,
+                                                      ),
+                                                      content: Consumer<
+                                                          SizeProvider>(
+                                                        builder: (context,
+                                                            sizeProvider,
+                                                            child) {
+                                                          List<Size> listSize =
+                                                              sizeProvider
+                                                                  .listSize;
+                                                          return SizedBox(
+                                                              width: 200,
+                                                              height: 250,
+                                                              child: ListView
+                                                                  .builder(
+                                                                itemCount:
+                                                                    listSize
+                                                                        .length,
+                                                                itemBuilder:
+                                                                    (context,
+                                                                        index) {
+                                                                  return Container(
+                                                                    width: size
+                                                                        .width,
+                                                                    height: 82,
+                                                                    margin: const EdgeInsets
+                                                                            .symmetric(
+                                                                        vertical:
+                                                                            7),
+                                                                    padding: const EdgeInsets
+                                                                            .only(
+                                                                        left:
+                                                                            35,
+                                                                        right:
+                                                                            35,
+                                                                        top:
+                                                                            10),
+                                                                    decoration: BoxDecoration(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        border: Border.all(
+                                                                            color: Colors
+                                                                                .grey,
+                                                                            width:
+                                                                                0.8),
+                                                                        borderRadius:
+                                                                            const BorderRadius.all(Radius.circular(10))),
+                                                                    child: Column(
+                                                                        children: [
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const Text(
+                                                                                'Size name',
+                                                                                style: AppTextStyle.heading3Black,
+                                                                              ),
+                                                                              Text('${listSize[index].sizeName}', style: AppTextStyle.heading3Black)
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const Text(
+                                                                                'Height',
+                                                                                style: AppTextStyle.heading3Black,
+                                                                              ),
+                                                                              Text('${listSize[index].height}', style: AppTextStyle.heading3Black)
+                                                                            ],
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              const Text(
+                                                                                'Weigh',
+                                                                                style: AppTextStyle.heading3Black,
+                                                                              ),
+                                                                              Text('${listSize[index].weigh}', style: AppTextStyle.heading3Black)
+                                                                            ],
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            height:
+                                                                                10,
+                                                                          ),
+                                                                        ]),
+                                                                  );
+                                                                },
+                                                              ));
+                                                        },
+                                                      ),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          child: const Text(
+                                                            'Ok',
+                                                            style: AppTextStyle
+                                                                .heading3Black,
+                                                          ),
+                                                        )
+                                                      ],
+                                                    );
+                                                  });
                                             },
                                             child: Container(
-                                              width: 60,
-                                              height: 40,
-                                              margin: const EdgeInsets.only(
-                                                  right: 10),
-                                              decoration: BoxDecoration(
-                                                  color: index_size == index
-                                                      ? AppTheme.color2
-                                                      : null,
-                                                  border: Border.all(
-                                                      color: Colors.grey,
-                                                      width: 1,
-                                                      style: BorderStyle.solid),
+                                              width: 100,
+                                              height: 39,
+                                              decoration: const BoxDecoration(
+                                                  color: AppTheme.color2,
                                                   borderRadius:
-                                                      const BorderRadius.all(
-                                                          Radius.circular(10))),
-                                              child: Center(
+                                                      BorderRadius.all(
+                                                          Radius.circular(8))),
+                                              child: const Center(
                                                 child: Text(
-                                                  '${productDetail.sizeData[index].size.sizeName}',
+                                                  'Xem thông số',
                                                   style: AppTextStyle
-                                                      .h_grey_no_underline,
+                                                      .heading4Black,
                                                 ),
                                               ),
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                            ))
+                                      ],
                                     )
                                   ],
                                 ),
@@ -468,8 +695,8 @@ class _ProductDetailState extends State<ProductDetail>
                                                                                 fontFamily: 'Poppins-Light',
                                                                                 fontSize: 16,
                                                                                 fontWeight: FontWeight.bold)),
-                                                                    const SizedBox(
-                                                                      width: 80,
+                                                                    SizedBox(
+                                                                      width: 30,
                                                                     ),
                                                                     Text(
                                                                         comments[index]
@@ -523,7 +750,7 @@ class _ProductDetailState extends State<ProductDetail>
                                                         contentController.text,
                                                         widget.productId!)
                                                     .then((message) => {
-                                                          showSnackbar(
+                                                          showSuccessDialog(
                                                               context, message)
                                                         })
                                                     .catchError((error) => {

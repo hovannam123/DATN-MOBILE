@@ -1,9 +1,7 @@
 import 'package:safe_food/src/resource/model/category.dart';
 import 'package:safe_food/src/resource/model/size.dart';
 
-
-
-class ProductDetailModel {
+class ProductDetail {
   int? id;
   String? name;
   String? imageOrigin;
@@ -14,7 +12,7 @@ class ProductDetailModel {
   Category? category;
   List<SizeData>? sizeData;
 
-  ProductDetailModel(
+  ProductDetail(
       {this.id,
       this.name,
       this.imageOrigin,
@@ -25,7 +23,7 @@ class ProductDetailModel {
       this.category,
       this.sizeData});
 
-  ProductDetailModel.fromJson(Map<String, dynamic> json) {
+  ProductDetail.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     imageOrigin = json['image_origin'];
@@ -65,18 +63,21 @@ class ProductDetailModel {
 
 class SizeData {
   int? amount;
+  int? id;
   Size? size;
 
-  SizeData({this.amount, this.size});
+  SizeData({this.amount, this.id, this.size});
 
   SizeData.fromJson(Map<String, dynamic> json) {
     amount = json['amount'];
+    id = json['id'];
     size = json['Size'] != null ? new Size.fromJson(json['Size']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['amount'] = this.amount;
+    data['id'] = this.id;
     if (this.size != null) {
       data['Size'] = this.size!.toJson();
     }

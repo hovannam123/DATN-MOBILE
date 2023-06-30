@@ -4,16 +4,20 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_text_style.dart';
 import 'package:safe_food/src/resource/model/bill.dart';
-import 'package:safe_food/src/resource/model/bill_chart.dart';
+import 'package:safe_food/src/resource/model/bill_item.dart';
 import 'package:safe_food/src/resource/model/product.dart';
 import 'package:safe_food/src/resource/model/top_product_selling.dart';
 import 'package:safe_food/src/resource/model/user.dart';
 import 'package:safe_food/src/resource/modules/admin/pending_order/pending_order_screen.dart';
 import 'package:safe_food/src/resource/modules/admin/charts/order_chart.dart';
 import 'package:safe_food/src/resource/modules/admin/stock/stock_available.dart';
+import 'package:safe_food/src/resource/modules/admin/user_analyst/user_screen.dart';
+import 'package:safe_food/src/resource/modules/user/introduce/introduce.dart';
 import 'package:safe_food/src/resource/provider/bill_provider.dart';
 import 'package:safe_food/src/resource/provider/product_provider.dart';
 import 'package:safe_food/src/resource/provider/user_provider.dart';
+import 'package:safe_food/src/resource/store_data/store_data.dart';
+import 'package:safe_food/src/resource/utils/enums/helpers.dart';
 
 import '../../../../../config/app_color.dart';
 
@@ -28,7 +32,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
   @override
   void initState() {
     Provider.of<BillProvider>(context, listen: false).getListBill();
-    Provider.of<BillProvider>(context, listen: false).getListBillPending();
+    Provider.of<BillProvider>(context, listen: false).getListBillItemPending();
     Provider.of<ProductProvider>(context, listen: false).getListProduct();
     Provider.of<UserProvider>(context, listen: false).getListUser();
     Provider.of<ProductProvider>(context, listen: false).getListTopSelling();
@@ -46,8 +50,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
     final userProvider = Provider.of<UserProvider>(context);
 
     final List<Bill> listBill = billProvider.listBill;
-    final List<Bill> listBillPending = billProvider.listBillPending;
-
+    final List<BillItem> listBillPending = billProvider.listBillItem;
     final List<Product> listProduct = productProvider.listProduct;
     final List<User> listUser = userProvider.listUser;
     final List<TopProductSelling> listTopSelling =
@@ -69,16 +72,30 @@ class _AdminHomePageState extends State<AdminHomePage> {
             )
           : Scaffold(
               appBar: AppBar(
-                backgroundColor: const Color(0xFFf5f5fa),
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.menu,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {},
-                ),
-              ),
+                  backgroundColor: const Color(0xFFf5f5fa),
+                  elevation: 0,
+                  automaticallyImplyLeading: false,
+                  centerTitle: true,
+                  actions: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.logout,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () async {
+                        await StoreData()
+                            .clearSharedPreferences()
+                            .then((_) => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => IntroScreen()))
+                                })
+                            .catchError(
+                                (error) => {showErrorDialog(context, error)});
+                      },
+                    ),
+                  ]),
               body: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 4, right: 4),
@@ -86,13 +103,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           TextButton(
                             onPressed: () {},
                             child: Container(
                               width: size.width / 2 - 20,
-                              height: size.width / 2 - 20,
+                              height: size.width / 2 - 30,
                               decoration: const BoxDecoration(
                                   gradient: AppTheme.gradient_analyse1,
                                   borderRadius:
@@ -108,12 +125,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                       size: 30,
                                     ),
                                     const SizedBox(
-                                      height: 20,
+                                      height: 10,
                                     ),
                                     Text(decimalFormat.format(getSales()),
                                         style: AppTextStyle.heading2Light),
                                     const Text('All sales',
-                                        style: AppTextStyle.heading2Light),
+                                        style: AppTextStyle.heading3pLight),
                                     const SizedBox(
                                       height: 10,
                                     ),
@@ -121,7 +138,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                       'Tap to view',
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           height: 1.6,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -139,7 +156,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             },
                             child: Container(
                               width: size.width / 2 - 20,
-                              height: size.width / 2 - 20,
+                              height: size.width / 2 - 30,
                               decoration: const BoxDecoration(
                                   gradient: AppTheme.gradient_analyse2,
                                   borderRadius:
@@ -155,12 +172,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                       size: 30,
                                     ),
                                     const SizedBox(
-                                      height: 20,
+                                      height: 10,
                                     ),
                                     Text('${listBillPending.length}',
                                         style: AppTextStyle.heading2Light),
                                     const Text('Pending Order',
-                                        style: AppTextStyle.heading2Light),
+                                        style: AppTextStyle.heading3pLight),
                                     const SizedBox(
                                       height: 10,
                                     ),
@@ -168,7 +185,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                       'Tap to view',
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           height: 1.6,
                                           fontWeight: FontWeight.w400),
                                     ),
@@ -191,7 +208,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             },
                             child: Container(
                               width: size.width / 2 - 20,
-                              height: size.width / 2 - 20,
+                              height: size.width / 2 - 30,
                               decoration: const BoxDecoration(
                                   gradient: AppTheme.gradient_analyse3,
                                   borderRadius:
@@ -207,12 +224,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                       size: 30,
                                     ),
                                     const SizedBox(
-                                      height: 20,
+                                      height: 10,
                                     ),
                                     Text('${listProduct.length}',
                                         style: AppTextStyle.heading2Light),
                                     const Text('Stock Avaiable',
-                                        style: AppTextStyle.heading2Light),
+                                        style: AppTextStyle.heading3pLight),
                                     const SizedBox(
                                       height: 10,
                                     ),
@@ -220,7 +237,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                       'Tap to view',
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           height: 1.6,
                                           fontWeight: FontWeight.w400),
                                     ),
@@ -230,10 +247,15 @@ class _AdminHomePageState extends State<AdminHomePage> {
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UserScreen()));
+                            },
                             child: Container(
                               width: size.width / 2 - 20,
-                              height: size.width / 2 - 20,
+                              height: size.width / 2 - 30,
                               decoration: const BoxDecoration(
                                   gradient: AppTheme.gradient_analyse4,
                                   borderRadius:
@@ -249,12 +271,12 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                       size: 30,
                                     ),
                                     const SizedBox(
-                                      height: 20,
+                                      height: 10,
                                     ),
                                     Text('${listUser.length}',
                                         style: AppTextStyle.heading2Light),
                                     const Text('All Customer',
-                                        style: AppTextStyle.heading2Light),
+                                        style: AppTextStyle.heading3pLight),
                                     const SizedBox(
                                       height: 10,
                                     ),
@@ -262,7 +284,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                       'Tap to view',
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           height: 1.6,
                                           fontWeight: FontWeight.w400),
                                     ),
@@ -296,7 +318,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       ),
                       Container(
                         width: size.width,
-                        height: size.height / 3,
+                        height: size.height / 2,
                         padding: EdgeInsets.only(top: 10),
                         margin: EdgeInsets.all(5),
                         child: ListView.builder(
@@ -326,7 +348,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
-                                        width: 290,
+                                        width: 250,
                                         child: Text(
                                           '${listTopSelling[index].product!.name}',
                                           style: AppTextStyle.heading3Black,

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
-import 'package:safe_food/src/resource/model/product.dart';
 import 'package:safe_food/src/resource/model/user.dart';
+import 'package:safe_food/src/resource/modules/user/history_bill/history_bill.dart';
+import 'package:safe_food/src/resource/modules/user/introduce/introduce.dart';
 import 'package:safe_food/src/resource/modules/user/profile/detail_profile.dart';
-import 'package:safe_food/src/resource/provider/product_provider.dart';
 import 'package:safe_food/src/resource/provider/user_provider.dart';
+import 'package:safe_food/src/resource/store_data/store_data.dart';
+import 'package:safe_food/src/resource/utils/enums/helpers.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -20,7 +20,6 @@ class MyProfile extends StatefulWidget {
 class _MyProfileState extends State<MyProfile> {
   @override
   void initState() {
-    Provider.of<UserProvider>(context, listen: false).getUserDetail();
     super.initState();
   }
 
@@ -67,7 +66,7 @@ class _MyProfileState extends State<MyProfile> {
                                     'https://cdn-icons-png.flaticon.com/512/2815/2815428.png'))),
                       )),
                       const SizedBox(
-                        width: 40,
+                        width: 20,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,9 +86,13 @@ class _MyProfileState extends State<MyProfile> {
                               ),
                             ],
                           ),
-                          Text(
-                            '${user?.email}',
-                            style: AppTextStyle.heading3Black,
+                          SizedBox(
+                            width: size.width / 2 - 10,
+                            child: Text(
+                              '${user?.email}',
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyle.heading3Black,
+                            ),
                           ),
                           Text(
                             user?.userInformation?.birthday?.split("T")[0] ??
@@ -107,12 +110,12 @@ class _MyProfileState extends State<MyProfile> {
                 ),
                 Container(
                   width: size.width,
-                  height: size.height / 1.8,
+                  height: size.height / 1.65,
                   margin: const EdgeInsets.only(top: 20),
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: ListView(children: [
+                  child: Column(children: [
                     SelectionWidget(
                       icData: FontAwesomeIcons.person,
                       title: 'Tài khoản',
@@ -132,7 +135,10 @@ class _MyProfileState extends State<MyProfile> {
                       description: 'Lịch sử đơn hàng của bạn',
                       icData3: Icons.arrow_forward_ios_outlined,
                       onPress: () {
-                        print('object');
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HistoryBill()));
                       },
                     ),
                     SelectionWidget(
@@ -176,8 +182,19 @@ class _MyProfileState extends State<MyProfile> {
                       title: 'Log out',
                       description: '',
                       icData3: Icons.arrow_forward_ios_outlined,
-                      onPress: () {
+                      onPress: () async {
                         print('object');
+
+                        await StoreData()
+                            .clearSharedPreferences()
+                            .then((_) => {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => IntroScreen()))
+                                })
+                            .catchError(
+                                (error) => {showErrorDialog(context, error)});
                       },
                     ),
                   ]),
@@ -211,7 +228,7 @@ class SelectionWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onPress,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 7, horizontal: 7),
+        margin: const EdgeInsets.symmetric(vertical: 7, horizontal: 7),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -222,7 +239,6 @@ class SelectionWidget extends StatelessWidget {
                     height: 40,
                     decoration: BoxDecoration(
                         color: Colors.grey.shade300,
-                        // border: Border.all(color: Colors.grey, width: 1),
                         borderRadius:
                             const BorderRadius.all(Radius.circular(100))),
                     child: Icon(icData)),
@@ -236,7 +252,11 @@ class SelectionWidget extends StatelessWidget {
                       title!,
                       style: AppTextStyle.heading3Black,
                     ),
-                    Text(description!, style: AppTextStyle.heading4Black),
+                    SizedBox(
+                        width: 150,
+                        child: Text(description!,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextStyle.heading4Black)),
                   ],
                 ),
               ],

@@ -1,19 +1,17 @@
-import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
-import 'package:safe_food/src/resource/model/product.dart';
 import 'package:safe_food/src/resource/model/user.dart';
 import 'package:safe_food/src/resource/model/user_information.dart';
 import 'package:safe_food/src/resource/modules/user/forget_password/forget_password.dart';
-import 'package:safe_food/src/resource/modules/user/forget_password/verify_code.dart';
-import 'package:safe_food/src/resource/provider/product_provider.dart';
 import 'package:safe_food/src/resource/provider/user_provider.dart';
 import 'package:safe_food/src/resource/utils/enums/helpers.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter/material.dart';
 
 class DetailProfile extends StatefulWidget {
   const DetailProfile({super.key});
@@ -23,6 +21,7 @@ class DetailProfile extends StatefulWidget {
 }
 
 class _DetailProfileState extends State<DetailProfile> {
+  String url = '';
   UserInformation userInformation = UserInformation();
   String dropdownValue = 'Nam';
   TextEditingController txtFirstName = TextEditingController();
@@ -52,6 +51,18 @@ class _DetailProfileState extends State<DetailProfile> {
       txtFirstName.text = "";
       txtLastName.text = "";
       txtPhoneNum.text = "";
+    });
+  }
+
+  Future<void> getImage() async {
+    String imagePath = '';
+    final pickedFile =
+        await ImagePicker().getImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      imagePath = pickedFile.path;
+    }
+    setState(() {
+      url = imagePath;
     });
   }
 
@@ -117,38 +128,80 @@ class _DetailProfileState extends State<DetailProfile> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Container(
-                              width: 140,
-                              height: 140,
-                              decoration: BoxDecoration(
-                                  color: Colors.pink.shade100,
-                                  border:
-                                      Border.all(color: Colors.grey, width: 1),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(100)),
-                                  image: DecorationImage(
-                                      fit: BoxFit.contain,
-                                      image: NetworkImage(user
-                                              .userInformation?.userImage ??
-                                          'https://cdn-icons-png.flaticon.com/512/2815/2815428.png'))),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 120),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    user.userInformation?.firstName ?? " ",
-                                    style: AppTextStyle.heading2Black,
+                            url == ''
+                                ? Container(
+                                    width: 140,
+                                    height: 140,
+                                    decoration: BoxDecoration(
+                                        color: Colors.pink.shade100,
+                                        border: Border.all(
+                                            color: Colors.grey, width: 1),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(100)),
+                                        image: DecorationImage(
+                                            fit: BoxFit.contain,
+                                            image: NetworkImage(user
+                                                    .userInformation
+                                                    ?.userImage ??
+                                                'https://cdn-icons-png.flaticon.com/512/2815/2815428.png'))),
+                                    child: Align(
+                                      alignment: Alignment.topRight,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 8, right: 8),
+                                        child: IconButton(
+                                          icon: const FaIcon(
+                                            FontAwesomeIcons.images,
+                                            color: Colors.blue,
+                                          ),
+                                          onPressed: () {
+                                            getImage();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Stack(
+                                    children: [
+                                      SizedBox(
+                                        width: 140,
+                                        height: 140,
+                                        child: ClipOval(
+                                          child: Image.file(
+                                            File(url),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 75),
+                                        child: IconButton(
+                                          icon: FaIcon(
+                                            FontAwesomeIcons.images,
+                                            color: Colors.blue,
+                                          ),
+                                          onPressed: () {
+                                            getImage();
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    user.userInformation?.lastName ?? " ",
-                                    style: AppTextStyle.heading2Black,
-                                  ),
-                                ],
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  user.userInformation?.firstName ?? " ",
+                                  style: AppTextStyle.heading2Black,
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                Text(
+                                  user.userInformation?.lastName ?? " ",
+                                  style: AppTextStyle.heading2Black,
+                                ),
+                              ],
                             ),
                             Text(
                               '${user.email}',
@@ -269,9 +322,9 @@ class _DetailProfileState extends State<DetailProfile> {
                               style: AppTextStyle.heading4Grey,
                             ),
                             value: dropdownValue,
-                            icon: const Icon(Icons.arrow_downward),
-                            iconSize: 15,
-                            elevation: 0,
+                            // icon: const Icon(Icons.arrow_downward),
+                            // iconSize: 15,
+                            elevation: 16,
                             style: AppTextStyle.heading4Black,
                             onChanged: (String? newValue) {
                               setState(() {
@@ -331,7 +384,7 @@ class _DetailProfileState extends State<DetailProfile> {
                                     dropdownValue == 'Nam' ? true : false,
                                     txtBirtday.text)
                                 .then((message) => {
-                                      showSnackbar(context, message),
+                                      showSuccessDialog(context, message),
                                       reloadUI()
                                     })
                                 .catchError((error) =>

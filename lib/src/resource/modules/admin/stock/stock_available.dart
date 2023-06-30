@@ -3,9 +3,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_text_style.dart';
-import 'package:safe_food/src/resource/model/product_detail_model.dart';
+import 'package:safe_food/src/resource/model/product_detail.dart';
 import 'package:safe_food/src/resource/modules/admin/all_size/size_screen.dart';
+import 'package:safe_food/src/resource/modules/admin/stock/product/add_product_screen.dart';
+import 'package:safe_food/src/resource/modules/admin/stock/product/add_product_size_screen.dart';
 import 'package:safe_food/src/resource/provider/product_detail_provider.dart';
+import 'package:safe_food/src/resource/repositories/product_size_repo.dart';
+import 'package:safe_food/src/resource/utils/enums/helpers.dart';
 
 import '../../../../../config/app_color.dart';
 
@@ -17,6 +21,8 @@ class StockAvailable extends StatefulWidget {
 }
 
 class _StockAvailableState extends State<StockAvailable> {
+  TextEditingController amountController = TextEditingController();
+
   @override
   void initState() {
     Provider.of<ProductDetailProvider>(context, listen: false)
@@ -27,7 +33,7 @@ class _StockAvailableState extends State<StockAvailable> {
   @override
   Widget build(BuildContext context) {
     final prodDetailProvider = Provider.of<ProductDetailProvider>(context);
-    final List<ProductDetailModel> listProduct = prodDetailProvider.listProduct;
+    final List<ProductDetail> listProduct = prodDetailProvider.listProduct;
     final size = MediaQuery.of(context).size;
     final NumberFormat decimalFormat =
         NumberFormat.simpleCurrency(locale: 'vi-VN');
@@ -85,84 +91,86 @@ class _StockAvailableState extends State<StockAvailable> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 15),
-                          decoration: const BoxDecoration(
-                              gradient: AppTheme.gradient_analyse3,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10))),
-                          child: Center(
-                            child: TextButton(
-                              child: const Text(
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => AddProductScreen()));
+                          },
+                          child: Container(
+                            height: 47,
+                            decoration: const BoxDecoration(
+                                gradient: AppTheme.gradient_analyse3,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                            child: const Center(
+                              child: Text(
                                 'Add Product',
                                 style: AppTextStyle.heading3Light,
                               ),
-                              onPressed: () {},
                             ),
                           ),
                         ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              width: size.width / 2 - 15,
-                              margin: const EdgeInsets.only(bottom: 15),
-                              decoration: const BoxDecoration(
-                                  gradient: AppTheme.gradient_analyse2,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              child: Center(
-                                child: TextButton(
-                                  child: const Text(
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SizeScreen()));
+                              },
+                              child: Container(
+                                width: size.width / 2 - 26,
+                                height: 47,
+                                decoration: const BoxDecoration(
+                                    gradient: AppTheme.gradient_analyse2,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                child: const Center(
+                                  child: Text(
                                     'All Size',
                                     style: AppTextStyle.heading3Light,
                                   ),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SizeScreen()));
-                                  },
                                 ),
                               ),
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              width: size.width / 2 - 15,
-                              margin: const EdgeInsets.only(bottom: 15),
-                              decoration: const BoxDecoration(
-                                  gradient: AppTheme.gradient_analyse1,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              child: Center(
-                                child: TextButton(
-                                  child: const Text(
+                            TextButton(
+                              onPressed: () {},
+                              child: Container(
+                                width: size.width / 2 - 26,
+                                height: 47,
+                                decoration: const BoxDecoration(
+                                    gradient: AppTheme.gradient_analyse1,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                child: const Center(
+                                  child: Text(
                                     'All Category',
                                     style: AppTextStyle.heading3Light,
                                   ),
-                                  onPressed: () {},
                                 ),
                               ),
                             ),
                           ],
                         ),
                         const Text(
-                          'Available Product List',
+                          'Product Available',
                           style: TextStyle(
                               fontFamily: 'Poppins-Bold', fontSize: 18),
                         ),
                         SizedBox(
                             width: size.width,
-                            height: size.height,
+                            height: size.height / 1.5,
                             child: ListView.builder(
                               itemCount: listProduct.length,
                               itemBuilder: (context, index) {
                                 return listProduct[index].status == true
                                     ? Container(
                                         width: size.width,
-                                        height: 200,
+                                        height: 300,
                                         margin: const EdgeInsets.only(
                                             top: 10, bottom: 10),
                                         decoration: const BoxDecoration(
@@ -220,6 +228,13 @@ class _StockAvailableState extends State<StockAvailable> {
                                                                     .price!)),
                                                         style: AppTextStyle
                                                             .h_grey_no_underline,
+                                                      ),
+                                                      Text(
+                                                        listProduct[index]
+                                                            .category!
+                                                            .name!,
+                                                        style: AppTextStyle
+                                                            .h_grey_no_underline,
                                                       )
                                                     ],
                                                   ),
@@ -236,8 +251,7 @@ class _StockAvailableState extends State<StockAvailable> {
                                             ),
                                             Expanded(
                                               child: Container(
-                                                  width: size.width - 70,
-                                                  height: 70,
+                                                  width: size.width - 10,
                                                   padding: const EdgeInsets
                                                           .symmetric(
                                                       horizontal: 10),
@@ -248,33 +262,178 @@ class _StockAvailableState extends State<StockAvailable> {
                                                             .length,
                                                     itemBuilder:
                                                         (context, index2) {
-                                                      return Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text(
-                                                            listProduct[index]
-                                                                .sizeData![
-                                                                    index2]
-                                                                .size!
-                                                                .sizeName!,
-                                                            style: AppTextStyle
-                                                                .h_grey_no_underline,
+                                                      return GestureDetector(
+                                                        onTap: () async {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return AlertDialog(
+                                                                  title:
+                                                                      const Text(
+                                                                    'Enter amount',
+                                                                    style: AppTextStyle
+                                                                        .heading3Black,
+                                                                  ),
+                                                                  content:
+                                                                      TextField(
+                                                                    keyboardType:
+                                                                        TextInputType
+                                                                            .number,
+                                                                    controller:
+                                                                        amountController,
+                                                                    decoration: const InputDecoration(
+                                                                        hintText:
+                                                                            "Enter amount import",
+                                                                        hintStyle:
+                                                                            AppTextStyle.heading4Grey),
+                                                                  ),
+                                                                  actions: <
+                                                                      Widget>[
+                                                                    TextButton(
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await ProductSizeRepository()
+                                                                              .importAmount(listProduct[index].sizeData![index2].id!, int.parse(amountController.text))
+                                                                              .then((message) => {
+                                                                                    Provider.of<ProductDetailProvider>(context, listen: false).getListProductDetail(),
+                                                                                    showSuccessDialog(context, message),
+                                                                                    Navigator.pop(context),
+                                                                                    amountController.text = ''
+                                                                                  })
+                                                                              .catchError((error) => {showErrorDialog(context, error)});
+                                                                        },
+                                                                        child:
+                                                                            const Text(
+                                                                          'Import',
+                                                                          style:
+                                                                              AppTextStyle.heading3Black,
+                                                                        )),
+                                                                    TextButton(
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.pop(
+                                                                            context);
+                                                                      },
+                                                                      child:
+                                                                          const Text(
+                                                                        'Cancel',
+                                                                        style: AppTextStyle
+                                                                            .heading3Black,
+                                                                      ),
+                                                                    )
+                                                                  ],
+                                                                );
+                                                              });
+                                                        },
+                                                        child: Container(
+                                                          height: 50,
+                                                          width: size.width,
+                                                          margin:
+                                                              const EdgeInsets
+                                                                      .only(
+                                                                  bottom: 5),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      15),
+                                                          decoration: const BoxDecoration(
+                                                              color:
+                                                                  Colors.grey,
+                                                              borderRadius: BorderRadius
+                                                                  .all(Radius
+                                                                      .circular(
+                                                                          10))),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                listProduct[
+                                                                        index]
+                                                                    .sizeData![
+                                                                        index2]
+                                                                    .size!
+                                                                    .sizeName!,
+                                                                style: AppTextStyle
+                                                                    .h_grey_no_underline,
+                                                              ),
+                                                              Text(
+                                                                listProduct[
+                                                                        index]
+                                                                    .sizeData![
+                                                                        index2]
+                                                                    .amount!
+                                                                    .toString(),
+                                                                style: AppTextStyle
+                                                                    .h_grey_no_underline,
+                                                              )
+                                                            ],
                                                           ),
-                                                          Text(
-                                                            listProduct[index]
-                                                                .sizeData![
-                                                                    index2]
-                                                                .amount!
-                                                                .toString(),
-                                                            style: AppTextStyle
-                                                                .h_grey_no_underline,
-                                                          )
-                                                        ],
+                                                        ),
                                                       );
                                                     },
                                                   )),
+                                            ),
+                                            Row(
+                                              children: [
+                                                TextButton(
+                                                    onPressed: () {},
+                                                    child: Container(
+                                                      width:
+                                                          size.width / 2 - 26,
+                                                      height: 47,
+                                                      decoration: const BoxDecoration(
+                                                          color:
+                                                              AppTheme.analyse3,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          10))),
+                                                      child: const Center(
+                                                        child: Text(
+                                                          'Update',
+                                                          style: AppTextStyle
+                                                              .heading3Light,
+                                                        ),
+                                                      ),
+                                                    )),
+                                                TextButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  AddProductSizeScreen(
+                                                                    productId:
+                                                                        listProduct[index]
+                                                                            .id!,
+                                                                  )));
+                                                    },
+                                                    child: Container(
+                                                      width:
+                                                          size.width / 2 - 26,
+                                                      height: 47,
+                                                      decoration: const BoxDecoration(
+                                                          color:
+                                                              AppTheme.analyse3,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          10))),
+                                                      child: const Center(
+                                                        child: Text(
+                                                          'Add size',
+                                                          style: AppTextStyle
+                                                              .heading3Light,
+                                                        ),
+                                                      ),
+                                                    )),
+                                              ],
                                             )
                                           ],
                                         ),

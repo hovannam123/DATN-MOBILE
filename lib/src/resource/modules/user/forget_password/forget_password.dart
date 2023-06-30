@@ -101,7 +101,7 @@ class _SendEmailState extends State<SendEmail> {
                         await authProvider
                             .forgetPassword(emailController.text)
                             .then((message) => {
-                                  showSnackbar(context, message),
+                                  showSuccessDialog(context, message),
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

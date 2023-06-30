@@ -16,12 +16,13 @@ class SizeRepository {
     }
   }
 
-  Future<String> createSize(Size size) async {
+  Future<String> createSize(
+      String sizeName, String weigh, String height) async {
     String url = "/create-size";
     Map<String, dynamic> body = {
-      "size_name": size.sizeName,
-      "weigh": size.weigh,
-      "height": size.height
+      "size_name": sizeName,
+      "weigh": weigh,
+      "height": height
     };
     var respond = await _baseApi.postMethod(url, body: body);
     if (respond["statusCode"] == 200) {
@@ -31,14 +32,9 @@ class SizeRepository {
     }
   }
 
-  Future<String> updateSize(
-      sizeId, String sizeName, String weigh, String height) async {
+  Future<String> updateSize(sizeId, String weigh, String height) async {
     String url = "/update-size?id=$sizeId";
-    Map<String, dynamic> body = {
-      "size_name": sizeName,
-      "weigh": weigh,
-      "height": height
-    };
+    Map<String, dynamic> body = {"weigh": weigh, "height": height};
     var respond = await _baseApi.putMethod(url, body: body);
     if (respond["statusCode"] == 200) {
       return respond["message"];

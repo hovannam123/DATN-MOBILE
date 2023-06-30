@@ -18,17 +18,17 @@ class BillRepository {
     }
   }
 
-  Future<List<Bill>> getListBillPending() async {
-    String url = "/all-bill-pending";
-    var respond = await _baseApi.getMethod(url);
-    if (respond["statusCode"] == 200) {
-      return (respond["data"] as List)
-          .map((json) => Bill.fromJson(json))
-          .toList();
-    } else {
-      throw respond["message"];
-    }
-  }
+  // Future<List<Bill>> getListBillPending() async {
+  //   String url = "/all-bill-pending";
+  //   var respond = await _baseApi.getMethod(url);
+  //   if (respond["statusCode"] == 200) {
+  //     return (respond["data"] as List)
+  //         .map((json) => Bill.fromJson(json))
+  //         .toList();
+  //   } else {
+  //     throw respond["message"];
+  //   }
+  // }
 
   Future<List<BillChart>> getListBillCount() async {
     String url = "/bill-count";
@@ -54,6 +54,18 @@ class BillRepository {
     }
   }
 
+  Future<List<BillItem>> getListBillItemUser(int userId) async {
+    String url = "/all-bill-item-user?user_id=$userId";
+    var respond = await _baseApi.getMethod(url);
+    if (respond["statusCode"] == 200) {
+      return (respond["data"] as List)
+          .map((json) => BillItem.fromJson(json))
+          .toList();
+    } else {
+      throw respond["message"];
+    }
+  }
+
   Future<List<BillItem>> getListBillItemPending() async {
     String url = "/all-bill-item-pending";
     var respond = await _baseApi.getMethod(url);
@@ -67,8 +79,10 @@ class BillRepository {
   }
 
   Future<String> verifyOrder(int billId) async {
-    String url = "/verify-order?id=$billId";
-    var respond = await _baseApi.putMethod(url);
+    String url = "/verify-order";
+    Map<String, dynamic> body = {"id": billId};
+
+    var respond = await _baseApi.putMethod(url, body: body);
     if (respond["statusCode"] == 200) {
       return respond["message"];
     } else {
