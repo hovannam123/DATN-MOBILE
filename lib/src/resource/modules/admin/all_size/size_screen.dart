@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
 import 'package:safe_food/src/resource/model/size.dart';
+import 'package:safe_food/src/resource/modules/admin/all_size/create_size/size_form.dart';
 import 'package:safe_food/src/resource/provider/size_provider.dart';
 
 class SizeScreen extends StatefulWidget {
@@ -14,6 +15,9 @@ class SizeScreen extends StatefulWidget {
 }
 
 class _SizeScreenState extends State<SizeScreen> {
+  TextEditingController heightController = TextEditingController();
+  TextEditingController weighController = TextEditingController();
+
   @override
   void initState() {
     Provider.of<SizeProvider>(context, listen: false).getListSize();
@@ -21,30 +25,17 @@ class _SizeScreenState extends State<SizeScreen> {
   }
 
   @override
+  void dispose() {
+    heightController.dispose();
+    weighController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final sizeProvider = Provider.of<SizeProvider>(context);
     final List<Size> listSize = sizeProvider.listSize;
     final size = MediaQuery.of(context).size;
-
-    void reloadUI() {
-      setState(() {
-        Provider.of<SizeProvider>(context, listen: false).getListSize();
-      });
-    }
-
-    void showSnackbar(String message) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            style: const TextStyle(
-                color: AppTheme.white, fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: Colors.grey,
-        ),
-      );
-    }
-
     return Container(
       decoration: const BoxDecoration(color: AppTheme.adminbgColor),
       child: sizeProvider.isLoad
@@ -126,7 +117,7 @@ class _SizeScreenState extends State<SizeScreen> {
                                         style: AppTextStyle.heading3Black)
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 10,
                                 ),
                                 Row(
@@ -140,7 +131,99 @@ class _SizeScreenState extends State<SizeScreen> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(15))),
                                       child: TextButton(
-                                        onPressed: () {},
+                                        onPressed: () async {
+                                          setState(() {
+                                            heightController.text =
+                                                listSize[index].height!;
+                                            weighController.text =
+                                                listSize[index].weigh!;
+                                          });
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                    'Update size',
+                                                    style: AppTextStyle
+                                                        .heading3Black,
+                                                  ),
+                                                  content: SizedBox(
+                                                    height: size.height / 5,
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                          'Size ${listSize[index].sizeName}',
+                                                          style: AppTextStyle
+                                                              .heading3Black,
+                                                        ),
+                                                        TextField(
+                                                          controller:
+                                                              heightController,
+                                                          style: AppTextStyle
+                                                              .heading3Black,
+                                                          decoration: const InputDecoration(
+                                                              prefix: Text(
+                                                                  "Height: "),
+                                                              prefixStyle:
+                                                                  AppTextStyle
+                                                                      .heading3Black),
+                                                        ),
+                                                        TextField(
+                                                          controller:
+                                                              weighController,
+                                                          style: AppTextStyle
+                                                              .heading3Black,
+                                                          decoration:
+                                                              const InputDecoration(
+                                                                  border: null,
+                                                                  prefix: Text(
+                                                                      "Weigh: "),
+                                                                  prefixStyle:
+                                                                      AppTextStyle
+                                                                          .heading3Black),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                        onPressed: () async {
+                                                          sizeProvider
+                                                              .updateSize(
+                                                                  listSize[
+                                                                          index]
+                                                                      .id!,
+                                                                  weighController
+                                                                      .text,
+                                                                  heightController
+                                                                      .text)
+                                                              .then((message) =>
+                                                                  {
+                                                                    sizeProvider
+                                                                        .getListSize(),
+                                                                    Navigator.pop(
+                                                                        context)
+                                                                  });
+                                                        },
+                                                        child: const Text(
+                                                          'Update',
+                                                          style: AppTextStyle
+                                                              .heading3Black,
+                                                        )),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text(
+                                                        'Cancel',
+                                                        style: AppTextStyle
+                                                            .heading3Black,
+                                                      ),
+                                                    )
+                                                  ],
+                                                );
+                                              });
+                                        },
                                         child: const Text(
                                           'Update',
                                           style: AppTextStyle.heading3Black,
@@ -172,17 +255,25 @@ class _SizeScreenState extends State<SizeScreen> {
                           },
                         ),
                       ),
-                      Container(
-                        width: size.width,
-                        height: 50,
-                        decoration: const BoxDecoration(
-                            gradient: AppTheme.gradient_analyse3,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(15))),
-                        child: const Center(
-                          child: Text(
-                            'Create size',
-                            style: AppTextStyle.heading2Black,
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SizeForm()));
+                        },
+                        child: Container(
+                          width: size.width,
+                          height: 50,
+                          decoration: const BoxDecoration(
+                              gradient: AppTheme.gradient_analyse3,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          child: const Center(
+                            child: Text(
+                              'Create size',
+                              style: AppTextStyle.heading2Black,
+                            ),
                           ),
                         ),
                       )

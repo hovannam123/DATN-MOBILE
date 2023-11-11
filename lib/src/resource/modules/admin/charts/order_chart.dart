@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/src/resource/model/bill_chart.dart';
@@ -28,7 +28,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
   Widget build(BuildContext context) {
     final billProvider = Provider.of<BillProvider>(context);
     return billProvider.isLoad
-        ? Center(
+        ? const Center(
             child: CircularProgressIndicator(),
           )
         : Stack(
@@ -82,7 +82,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
 
   double getMaxX() {
     final billProvider = Provider.of<BillProvider>(context);
-    final listBillCount = billProvider.listBillCount as List<dynamic>;
+    final List<BillChart> listBillCount = billProvider.listBillCount;
     listBillCount.sort((a, b) => a.date!.compareTo(b.date!));
     return listBillCount[listBillCount.length - 1].date!.day.toDouble();
   }
@@ -182,6 +182,9 @@ class _LineChartSample2State extends State<LineChartSample2> {
         break;
       case 7:
         text = '7M';
+        break;
+      case 10:
+        text = '10M';
         break;
       default:
         return Container();
@@ -318,7 +321,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
       minX: 1,
       maxX: getMaxX(),
       minY: 0,
-      maxY: 7,
+      maxY: 10,
       lineBarsData: [
         LineChartBarData(
           spots: drawpointIncome(),

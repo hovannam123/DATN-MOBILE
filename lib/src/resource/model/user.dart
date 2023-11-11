@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:safe_food/src/resource/model/user_information.dart';
 
 class User {
@@ -8,6 +10,7 @@ class User {
   bool? active;
   int? roleId;
   UserInformation? userInformation;
+  List<BillData>? billData;
 
   User(
       {this.id,
@@ -16,7 +19,8 @@ class User {
       this.phoneNumber,
       this.active,
       this.roleId,
-      this.userInformation});
+      this.userInformation,
+      this.billData});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -28,6 +32,12 @@ class User {
     userInformation = json['UserInformation'] != null
         ? new UserInformation.fromJson(json['UserInformation'])
         : null;
+    if (json['bill_data'] != null) {
+      billData = <BillData>[];
+      json['bill_data'].forEach((v) {
+        billData!.add(new BillData.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -41,6 +51,28 @@ class User {
     if (this.userInformation != null) {
       data['UserInformation'] = this.userInformation!.toJson();
     }
+    if (this.billData != null) {
+      data['bill_data'] = this.billData!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class BillData {
+  int? totalBill;
+  String? totalPayment;
+
+  BillData({this.totalBill, this.totalPayment});
+
+  BillData.fromJson(Map<String, dynamic> json) {
+    totalBill = json['total_bill'];
+    totalPayment = json['total_payment'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['total_bill'] = this.totalBill;
+    data['total_payment'] = this.totalPayment;
     return data;
   }
 }

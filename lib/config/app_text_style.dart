@@ -13,7 +13,7 @@ class AppTextStyle {
   static const heading1Medium = TextStyle(
     fontWeight: FontWeight.bold,
     fontSize: 24,
-    height: 1.5,
+    height: 1.2,
     color: Colors.black,
     decoration: TextDecoration.none,
   );
@@ -77,6 +77,13 @@ class AppTextStyle {
       fontWeight: FontWeight.w600,
       fontSize: 14,
       height: 1.4,
+      fontFamily: 'Poppins-Light',
+      decoration: TextDecoration.none,
+      color: Colors.white);
+  static const heading3pLight = TextStyle(
+      fontWeight: FontWeight.w600,
+      fontSize: 15,
+      height: 1.2,
       fontFamily: 'Poppins-Light',
       decoration: TextDecoration.none,
       color: Colors.white);

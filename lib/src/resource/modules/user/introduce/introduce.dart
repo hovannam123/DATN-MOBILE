@@ -42,187 +42,193 @@ class _IntroScreenState extends State<IntroScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    return Container(
-      decoration: const BoxDecoration(gradient: AppTheme.backgroundGradient),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-        GestureDetector(
-          onTap: () {
-            if (_controller.value.isPlaying) {
-              setState(() {
-                _controller.pause();
-              });
-            } else {
-              setState(() {
-                _controller.play();
-              });
-            }
-          },
-          child: Container(
-              margin: const EdgeInsets.only(bottom: 25),
-              width: size.width,
-              height: 406,
-              child: _controller.value.isInitialized
-                  ? AspectRatio(
-                      aspectRatio: _controller.value.aspectRatio,
-                      child: VideoPlayer(_controller),
-                    )
-                  : Container()),
-        ),
-        const Text(
-          'E-SHOPPING',
-          style: AppTextStyle.heading1Medium,
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        Container(
-          width: size.width - 32,
-          margin: const EdgeInsets.only(bottom: 12),
-          height: 44,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: ElevatedButton(
-            style: const ButtonStyle(
-                backgroundColor:
-                    MaterialStatePropertyAll<Color>(AppTheme.yellow)),
-            onPressed: () {},
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Image.asset('assets/images/kakaotalk.png'),
-                const SizedBox(
-                  width: 282,
-                  child: Text(
-                    'Đăng nhập bằng KakaoTalk',
-                    style: AppTextStyle.heading3Black,
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-        Container(
-          width: size.width - 32,
-          height: 44,
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: ElevatedButton(
-            style: const ButtonStyle(
-                backgroundColor:
-                    MaterialStatePropertyAll<Color>(AppTheme.green)),
-            onPressed: () {
-              Provider.of<FacebookProvider>(context, listen: false).login();
+    return SingleChildScrollView(
+      child: Container(
+        decoration: const BoxDecoration(gradient: AppTheme.backgroundGradient),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          GestureDetector(
+            onTap: () {
+              if (_controller.value.isPlaying) {
+                setState(() {
+                  _controller.pause();
+                });
+              } else {
+                setState(() {
+                  _controller.play();
+                });
+              }
             },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Image.asset('assets/images/LogoFacebook.png'),
-                const SizedBox(
-                  width: 282,
-                  child: Text(
-                    'Đăng nhập bằng Facebook',
-                    style: AppTextStyle.heading3Light,
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              ],
-            ),
+            child: Container(
+                margin: const EdgeInsets.only(bottom: 25),
+                width: size.width,
+                height: 390,
+                child: _controller.value.isInitialized
+                    ? AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: VideoPlayer(_controller),
+                      )
+                    : Container()),
           ),
-        ),
-        Container(
-          width: size.width - 32,
-          height: 44,
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
+          const Text(
+            'E-SHOPPING',
+            style: AppTextStyle.heading1Medium,
           ),
-          child: ElevatedButton(
-            style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll<Color>(Colors.black)),
-            onPressed: () {},
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Image.asset('assets/images/LogoApple.png'),
-                const SizedBox(
-                  width: 282,
-                  child: Text(
-                    'Đăng nhập bằng Apple',
-                    style: AppTextStyle.heading3Light,
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              ],
-            ),
+          const SizedBox(
+            height: 20,
           ),
-        ),
-        Container(
-          width: size.width - 32,
-          height: 44,
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
+          Container(
+            width: size.width - 32,
+            margin: const EdgeInsets.only(bottom: 12),
+            height: 44,
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
-              border: Border.all(
-                  color: Colors.grey, width: 1.5, style: BorderStyle.solid)),
-          child: ElevatedButton(
-            style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll<Color>(Colors.white)),
-            onPressed: () {
-              Provider.of<GoogleProvider>(context, listen: false).logIn();
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Image.asset('assets/images/LogoGoogle.png'),
-                const SizedBox(
-                  width: 282,
-                  child: Text(
-                    'Đăng nhập bằng Google',
-                    style: AppTextStyle.heading3Black,
-                    textAlign: TextAlign.center,
-                  ),
-                )
-              ],
             ),
-          ),
-        ),
-        SizedBox(
-          height: 45,
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            TextButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => RegisterScreen()));
-              },
-              child: const Text(
-                'Đăng kí bằng Email',
-                style: AppTextStyle.heading4Black,
+            child: ElevatedButton(
+              style: const ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll<Color>(AppTheme.yellow)),
+              onPressed: () {},
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Image.asset('assets/images/kakaotalk.png'),
+                  const SizedBox(
+                    // width: 282,
+                    child: Text(
+                      'Đăng nhập bằng KakaoTalk',
+                      style: AppTextStyle.heading3Black,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                ],
               ),
             ),
-            const Text(
-              '|',
-              style: TextStyle(
-                  height: 1.2,
-                  fontSize: 16,
-                  color: Colors.black,
-                  decoration: TextDecoration.none),
+          ),
+          Container(
+            width: size.width - 32,
+            height: 44,
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
             ),
-            TextButton(
+            child: ElevatedButton(
+              style: const ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll<Color>(AppTheme.green)),
+              onPressed: () {
+                Provider.of<FacebookProvider>(context, listen: false).login();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Image.asset('assets/images/LogoFacebook.png'),
+                  const SizedBox(
+                    // width: 282,
+                    child: Text(
+                      'Đăng nhập bằng Facebook',
+                      style: AppTextStyle.heading3Light,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Container(
+            width: size.width - 32,
+            height: 44,
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: ElevatedButton(
+              style: const ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll<Color>(Colors.black)),
+              onPressed: () {},
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Image.asset('assets/images/LogoApple.png'),
+                  const SizedBox(
+                    // width: 282,
+                    child: Text(
+                      'Đăng nhập bằng Apple',
+                      style: AppTextStyle.heading3Light,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Container(
+            width: size.width - 32,
+            height: 44,
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                    color: Colors.grey, width: 1.5, style: BorderStyle.solid)),
+            child: ElevatedButton(
+              style: const ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll<Color>(Colors.white)),
+              onPressed: () {
+                Provider.of<GoogleProvider>(context, listen: false).logIn();
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Image.asset('assets/images/LogoGoogle.png'),
+                  const SizedBox(
+                    // width: 282,
+                    child: Text(
+                      'Đăng nhập bằng Google',
+                      style: AppTextStyle.heading3Black,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 45,
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              TextButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegisterScreen()));
                 },
                 child: const Text(
-                  'Đăng nhập bằng Email',
+                  'Đăng kí bằng Email',
                   style: AppTextStyle.heading4Black,
-                )),
-          ]),
-        ),
-      ]),
+                ),
+              ),
+              const Text(
+                '|',
+                style: TextStyle(
+                    height: 1.2,
+                    fontSize: 16,
+                    color: Colors.black,
+                    decoration: TextDecoration.none),
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()));
+                  },
+                  child: const Text(
+                    'Đăng nhập bằng Email',
+                    style: AppTextStyle.heading4Black,
+                  )),
+            ]),
+          ),
+        ]),
+      ),
     );
   }
 }

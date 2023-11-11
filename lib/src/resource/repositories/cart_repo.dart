@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:safe_food/src/resource/model/cart_item.dart';
 import 'package:safe_food/src/resource/struct/api_services/base_api.dart';
+import 'package:http/http.dart' as http;
 
 class CartRepository {
   final BaseApi _baseApi = BaseApi();
@@ -46,6 +49,7 @@ class CartRepository {
     String url = "/increase-quantity-item";
     Map<String, dynamic> body = {"cart_item_id": cartItemId};
     var respond = await _baseApi.putMethod(url, body: body);
+
     if (respond["statusCode"] == 200) {
       return respond["message"];
     } else {
@@ -54,8 +58,9 @@ class CartRepository {
   }
 
   Future<String> decreaseQuantity(int cartItemId) async {
+    try {} catch (error) {}
     String url = "/decrease-quantity-item";
-    Map<String, dynamic> body = {"cart_item_id": cartItemId};
+    Map<String, int> body = {"cart_item_id": cartItemId};
     var respond = await _baseApi.putMethod(url, body: body);
     if (respond["statusCode"] == 200) {
       return respond["message"];

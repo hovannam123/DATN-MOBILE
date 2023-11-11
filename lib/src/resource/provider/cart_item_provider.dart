@@ -13,10 +13,10 @@ class CartItemProvider with ChangeNotifier {
   get listCartItem => this._listCartItem;
 
   void getListCartItem() async {
-    isLoad = true;
+    // isLoad = true;
     User? user = await storeData.retrieveUser();
     _listCartItem = await _cartRepository.getListCartItem(user.id!);
-    isLoad = false;
+    // isLoad = false;
     notifyListeners();
   }
 

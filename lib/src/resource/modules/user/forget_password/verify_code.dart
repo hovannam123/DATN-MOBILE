@@ -111,7 +111,7 @@ class _VerifyCodeState extends State<VerifyCode> {
                                   .verify(
                                       widget.email, verifyCodeController.text)
                                   .then((message) => {
-                                        showSnackbar(context, message),
+                                        showSuccessDialog(context, message),
                                         if (widget.isResetPW)
                                           {
                                             Navigator.push(

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:safe_food/src/resource/model/product_detail_model.dart';
+import 'package:safe_food/src/resource/model/product_detail.dart';
 import 'package:safe_food/src/resource/repositories/product_detail_repo.dart';
 
 class ProductDetailProvider with ChangeNotifier {
   final ProductDetailRepository _productDetailRepository =
       ProductDetailRepository();
-  ProductDetailModel? _productDetail;
-  List<ProductDetailModel> _listProduct = [];
+  ProductDetail? _productDetail;
+  List<ProductDetail> _listProduct = [];
 
   bool isLoad = false;
   get productDetail => this._productDetail;

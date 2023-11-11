@@ -27,4 +27,10 @@ class StoreData {
     Map<String, dynamic> userJson = jsonDecode(json!);
     return User.fromJson(userJson);
   }
+
+  Future<void> clearSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+    await prefs.remove('user');
+  }
 }

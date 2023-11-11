@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:safe_food/config/app_color.dart';
 import 'package:safe_food/config/app_text_style.dart';
 import 'package:safe_food/src/resource/model/bill_item.dart';
 import 'package:safe_food/src/resource/provider/bill_provider.dart';
+import 'package:safe_food/src/resource/utils/enums/helpers.dart';
 
 class BillItemScreen extends StatefulWidget {
   const BillItemScreen({super.key});
@@ -28,19 +26,6 @@ class _BillItemScreenState extends State<BillItemScreen> {
       Provider.of<BillProvider>(context, listen: false)
           .getListBillItemPending();
     });
-  }
-
-  void showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-              color: AppTheme.white, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.grey,
-      ),
-    );
   }
 
   @override
@@ -103,9 +88,10 @@ class _BillItemScreenState extends State<BillItemScreen> {
                   child: FloatingActionButton.extended(
                     backgroundColor: Colors.pink.shade200,
                     onPressed: () async {
-                      await billProvider
-                          .verifyAllOrder()
-                          .then((message) => {showSnackbar(message)});
+                      await billProvider.verifyAllOrder().then((message) => {
+                            billProvider.getListBillPending,
+                            showSuccessDialog(context, message)
+                          });
                       reloadUI();
                     },
                     label: const Text(
@@ -147,6 +133,25 @@ class _BillItemScreenState extends State<BillItemScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceAround,
                                         children: [
+                                          Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  Radius.circular(50),
+                                                ),
+                                                image: DecorationImage(
+                                                  fit: BoxFit.cover,
+                                                  image: NetworkImage(
+                                                    listBillItem[index]
+                                                            .user
+                                                            ?.userInformation
+                                                            ?.userImage ??
+                                                        'https://cdn-icons-png.flaticon.com/512/2815/2815428.png',
+                                                  ),
+                                                )),
+                                          ),
                                           Text(
                                             '${listBillItem[index].user!.email}',
                                             style: const TextStyle(
@@ -275,8 +280,12 @@ class _BillItemScreenState extends State<BillItemScreen> {
                                           await billProvider
                                               .verifyOrder(
                                                   listBillItem[index].id!)
-                                              .then((message) =>
-                                                  {showSnackbar(message)});
+                                              .then((message) => {
+                                                    billProvider
+                                                        .getListBillPending,
+                                                    showSuccessDialog(
+                                                        context, message)
+                                                  });
                                           reloadUI();
                                         },
                                         child: Container(

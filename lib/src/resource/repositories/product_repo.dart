@@ -17,6 +17,30 @@ class ProductRepository {
     }
   }
 
+  Future<List<Product>> searchProduct(int categoryId, String text) async {
+    String url = "/search-product?category_id=$categoryId&text=$text";
+    var respond = await _baseApi.getMethod(url);
+    if (respond['statusCode'] == 200) {
+      return (respond['data'] as List)
+          .map((json) => Product.fromJson(json))
+          .toList();
+    } else {
+      throw respond['message'];
+    }
+  }
+
+  Future<List<Product>> getListProductByCategory(int categoryId) async {
+    String url = "/all-product-category?category_id=$categoryId";
+    var respond = await _baseApi.getMethod(url);
+    if (respond['statusCode'] == 200) {
+      return (respond['data'] as List)
+          .map((json) => Product.fromJson(json))
+          .toList();
+    } else {
+      throw respond['message'];
+    }
+  }
+
   Future<List<TopProductSelling>> getListTopSelling() async {
     String url = "/top-selling-product";
     final respond = await _baseApi.getMethod(url);
@@ -68,6 +92,25 @@ class ProductRepository {
   Future<String> createProductFavourite(int userId, int productId) async {
     String url = "/create-product-favourite?user_id=$userId";
     Map<String, dynamic> body = {'product_id': productId};
+    var respond = await _baseApi.postMethod(url, body: body);
+    if (respond['statusCode'] == 200) {
+      return respond['message'];
+    } else {
+      throw respond['message'];
+    }
+  }
+
+  Future<String> createProduct(
+      int categoryId, String name, String description, double price) async {
+    String url = "/create-product";
+    Map<String, dynamic> body = {
+      "category_id": categoryId,
+      "name": name,
+      "image_origin":
+          "https://media.coolmate.me/cdn-cgi/image/quality=80,format=auto/uploads/May2023/234xanh-bac-ha-1-(1).jpg",
+      "description": description,
+      "price": price
+    };
     var respond = await _baseApi.postMethod(url, body: body);
     if (respond['statusCode'] == 200) {
       return respond['message'];
